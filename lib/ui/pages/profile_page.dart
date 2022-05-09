@@ -1,10 +1,12 @@
 import 'package:bwcc_app/bloc/auth_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
+import 'package:bwcc_app/config/date_time.dart';
 import 'package:bwcc_app/models/user.dart';
 import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import 'auth_page.dart';
 
@@ -93,7 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Text(
-                                  'Citra Sari',
+                                  authState.data.username.toString(),
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
                                     fontWeight: FontWeight.w500,
@@ -102,7 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 const Divider(thickness: 1.5),
                                 Text(
-                                  '24 Maret 1980',
+                                  authState.data.createdAt.toString().substring(0, 10),
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.secondary,
                                     fontWeight: FontWeight.w500,
@@ -110,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ),
                                 Text(
-                                  '0811-1111-1111',
+                                  authState.data.noHandphone.toString(),
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.secondary,
                                     fontSize: 14,

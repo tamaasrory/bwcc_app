@@ -1,15 +1,20 @@
+import 'dart:convert';
+
 import 'package:bwcc_app/bloc/auth_bloc.dart';
+import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
+import 'package:bwcc_app/models/layanan_kami.dart';
 import 'package:bwcc_app/models/user.dart';
-import 'package:bwcc_app/ui/pages/cari_dokter_page.dart';
+import 'package:bwcc_app/ui/pages/reservasi_page.dart';
 import 'package:bwcc_app/ui/widgets/banner_artikel.dart';
 import 'package:bwcc_app/ui/widgets/banner_infopromo.dart';
 import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import 'auth_page.dart';
+import 'cari_dokter_page.dart';
 
 class BerandaPage extends StatefulWidget {
   const BerandaPage({Key? key}) : super(key: key);
@@ -20,11 +25,26 @@ class BerandaPage extends StatefulWidget {
 
 class _BerandaPageState extends State<BerandaPage> {
   bool loadImgProfile = false;
+  List<LayananKami> _gridMenus = [];
 
   // List<Map<String, dynamic>> _topMenus = ;
 
   @override
   initState() {
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      logApp('sending request slide layanan');
+      context.read<BerandaBloc>().add(SetSlideLayananEvent());
+    });
+
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      logApp('sending request slide info');
+      context.read<BerandaBloc>().add(SetSlideInfoEvent());
+    });
+
+    Future.delayed(const Duration(milliseconds: 1700), () {
+      logApp('sending request slide artikel');
+      context.read<BerandaBloc>().add(SetSlideArtikelEvent());
+    });
     super.initState();
   }
 
@@ -89,7 +109,7 @@ class _BerandaPageState extends State<BerandaPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
           child: Text(
-            'Hi, ${authState.data.email}',
+            'Hi, ${authState.data.username}',
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: 20,
@@ -130,7 +150,7 @@ class _BerandaPageState extends State<BerandaPage> {
                   'icon': Icons.content_paste,
                   'label': 'Reservasi',
                   'onPressed': () {
-                    logApp('run....');
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ReservasiPage()));
                   },
                 },
                 {
@@ -210,98 +230,106 @@ class _BerandaPageState extends State<BerandaPage> {
                           ),
                         ),
                       ),
-                      GridView.count(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        crossAxisCount: 3,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          {
-                            'icon': 'icon_anak.png',
-                            'label': 'Anak',
-                            'onPressed': () {
-                              logApp('run....');
-                            },
-                          },
-                          {
-                            'icon': 'icon_obgyn.png',
-                            'label': 'Obgyn',
-                            'onPressed': () {
-                              logApp('run....');
-                            },
-                          },
-                          {
-                            'icon': 'icon_zygote.png',
-                            'label': 'Zygote',
-                            'onPressed': () {
-                              logApp('run....');
-                            },
-                          },
-                          {
-                            'icon': 'icon_gigi.png',
-                            'label': 'Gigi',
-                            'onPressed': () {
-                              logApp('run....');
-                            },
-                          },
-                          {
-                            'icon': 'icon_laktasi.png',
-                            'label': 'Laktasi',
-                            'onPressed': () {
-                              logApp('run....');
-                            },
-                          },
-                          {
-                            'icon': 'icon_gizi.png',
-                            'label': 'Gizi',
-                            'onPressed': () {
-                              logApp('run....');
-                            },
-                          },
-                          {
-                            'icon': 'icon_poli_kulit.png',
-                            'label': 'Kulit',
-                            'onPressed': () {
-                              logApp('run....');
-                            },
-                          },
-                        ].map((e) {
-                          return ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              elevation: 0,
-                              primary: Theme.of(context).colorScheme.background,
-                              onPrimary: Theme.of(context).colorScheme.primary,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/${e['icon']}',
-                                  width: 80,
-                                  height: 80,
+                      BlocListener<BerandaBloc, BerandaState>(
+                        listener: (context, state) {
+                          if (state is SlideLayananState) {
+                            logApp('SLIDES => ' + jsonEncode(state.slides));
+                            _gridMenus = state.slides;
+                            setState(() {});
+                          }
+                        },
+                        child: GridView.count(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          crossAxisCount: 3,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: _gridMenus.map((e) {
+                            var labels = e.judul?.split(' ');
+                            List<TextSpan> wLabel = [];
+
+                            if ((labels?.length ?? 0) > 1) {
+                              wLabel.addAll([
+                                const TextSpan(text: 'Poli '),
+                                TextSpan(
+                                  text: e.judul?.replaceFirst('Poli ', ''),
+                                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                                 ),
-                                RichText(
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Theme.of(context).colorScheme.primary,
-                                      fontSize: 15,
-                                    ),
-                                    children: [
-                                      const TextSpan(text: 'Poli '),
-                                      TextSpan(
-                                        text: e['label'] as String,
-                                        style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                                      ),
-                                    ],
+                              ]);
+                            } else {
+                              wLabel.add(TextSpan(
+                                text: e.judul,
+                                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                              ));
+                            }
+
+                            return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                elevation: 0,
+                                primary: Theme.of(context).colorScheme.background,
+                                onPrimary: Theme.of(context).colorScheme.primary,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Image.asset(
+                                  //   'assets/images/${e['icon']}',
+                                  //   width: 80,
+                                  //   height: 80,
+                                  // ),
+                                  Image.network(
+                                    Urls.getIcon(e.icon),
+                                    width: 80,
+                                    height: 80,
+                                    errorBuilder: (a, b, c) {
+                                      return Image.asset(
+                                        'assets/images/logo_white_background.png',
+                                        width: 80,
+                                        height: 80,
+                                      );
+                                    },
                                   ),
-                                )
-                              ],
-                            ),
-                            onPressed: e['onPressed'] as Function(),
-                          );
-                        }).toList(),
+                                  RichText(
+                                    text: TextSpan(
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: Theme.of(context).colorScheme.primary,
+                                        fontSize: 15,
+                                      ),
+                                      children: wLabel,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              onPressed: () {
+                                dialogContent(
+                                  context,
+                                  title: e.judul ?? 'Poli',
+                                  contentPadding: EdgeInsets.zero,
+                                  contents: SizedBox(
+                                    height: (MediaQuery.of(context).size.height / 2) - 50,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 180,
+                                            width: 180,
+                                            child: Image.network(Urls.getIcon(e.featureImage)),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(20),
+                                            child: Text(e.deskripsi!),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }).toList(),
+                        ),
                       ),
                     ],
                   ),
@@ -372,21 +400,21 @@ class _BerandaPageState extends State<BerandaPage> {
                       'icon': 'ic_ig.png',
                       'label': 'Cari Dokter',
                       'onPressed': () {
-                        logApp('run....');
+                        _launchUrl('https://www.instagram.com/bwcc_bintaro/');
                       },
                     },
                     {
                       'icon': 'ic_facebook.png',
                       'label': 'Reservasi',
                       'onPressed': () {
-                        logApp('run....');
+                        _launchUrl('https://facebook.com/bwccbintaro/');
                       },
                     },
                     {
                       'icon': 'ic_youtube.png',
                       'label': 'Promo',
                       'onPressed': () {
-                        logApp('run....');
+                        _launchUrl('https://www.youtube.com/channel/UCUTDtLLjdvCF8gHBw9zvjuw');
                       },
                     },
                   ].map((e) {
@@ -416,5 +444,10 @@ class _BerandaPageState extends State<BerandaPage> {
         ),
       ],
     );
+  }
+
+  void _launchUrl(String url) async {
+    final Uri _url = Uri.parse(url);
+    if (!await launchUrl(_url)) throw 'Could not launch $_url';
   }
 }

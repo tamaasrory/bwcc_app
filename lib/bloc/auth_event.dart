@@ -20,4 +20,10 @@ class LoginEvent extends AuthEvent {
   const LoginEvent(this.email, this.password);
 }
 
+class RegisterEvent extends AuthEvent {
+  final FormRegister formRegister;
+
+  const RegisterEvent(this.formRegister);
+}
+
 class SignOutEvent extends AuthEvent {}

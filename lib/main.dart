@@ -1,11 +1,13 @@
 import 'package:bwcc_app/bloc/auth_bloc.dart';
 import 'package:bwcc_app/bloc/bottom_navbar_bloc.dart';
-import 'package:bwcc_app/bloc/home_bloc.dart';
+import 'package:bwcc_app/bloc/beranda_bloc.dart';
+import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/ui/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,12 +19,21 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'BWCC Mobile',
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+        Locale('id', ''), // indonesia, no country code
+      ],
+      locale: const Locale('id'),
       theme: ThemeData(
         colorScheme: Theme.of(context).colorScheme.copyWith(
               primary: AppColors.softTeal,
@@ -42,9 +53,10 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MultiBlocProvider(
           providers: [
-            BlocProvider(create: (context) => HomeBloc()),
+            BlocProvider(create: (context) => BerandaBloc()),
             BlocProvider(create: (context) => AuthBloc()),
             BlocProvider(create: (context) => BottomNavbarBloc()),
+            BlocProvider(create: (context) => ReservasiBloc()),
           ],
           child: child!,
         );

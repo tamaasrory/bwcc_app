@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:bwcc_app/models/form_register.dart';
 import 'package:equatable/equatable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -59,6 +60,50 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           data: User(),
           isLogged: false,
           message: 'Login gagal, mohon periksa koneksi internet anda',
+        ));
+      }
+    });
+
+    on<RegisterEvent>((event, emit) async {
+      emit(const AuthProgessState(true));
+
+      var httpResponse = await AuthService.register(formRegister: event.formRegister);
+
+      emit(const AuthProgessState(false));
+
+      try {
+        // logApp(httpResponse.toJson().toString());
+
+        if (httpResponse.condition) {
+          String user = jsonEncode(httpResponse.results!.toJson());
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+
+          preferences.setBool(AppConfig.prefIsLogged, true);
+          preferences.setString(AppConfig.prefUser, user);
+
+          if (Platform.isAndroid) {
+            preferences.commit();
+          }
+
+          emit(AuthAttampState(
+            data: httpResponse.results!,
+            isLogged: true,
+            message: 'Pendaftaran Berhasil, Sedang mengalihkan ke halaman utama',
+          ));
+        } else {
+          emit(AuthAttampState(
+            data: User(),
+            isLogged: false,
+            message: httpResponse.message!,
+          ));
+        }
+      } catch (e) {
+        // logApp('Error on on<LoginEvent> => ' + e.toString());
+
+        emit(AuthAttampState(
+          data: User(),
+          isLogged: false,
+          message: 'Pendaftaran gagal, mohon periksa koneksi internet anda',
         ));
       }
     });

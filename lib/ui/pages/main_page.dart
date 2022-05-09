@@ -2,6 +2,7 @@
 import 'package:bwcc_app/bloc/bottom_navbar_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/ui/pages/beranda_page.dart';
+import 'package:bwcc_app/ui/pages/jadwal_dokter_page.dart';
 import 'package:bwcc_app/ui/pages/jadwal_page.dart';
 import 'package:bwcc_app/ui/pages/riwayat_page.dart';
 
@@ -35,7 +36,7 @@ class _MainPageState extends State<MainPage> {
         );
       },
     ),
-    JadwalPage(
+    JadwalDokterPage(
       key: PageStorageKey('Jadwal'),
     ),
     RiwayatPage(

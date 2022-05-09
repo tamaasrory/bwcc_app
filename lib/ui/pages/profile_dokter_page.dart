@@ -1,10 +1,19 @@
+import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/ui/pages/reservasi_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileDokterPage extends StatefulWidget {
-  const ProfileDokterPage({Key? key}) : super(key: key);
+  final String dokterId;
+  final String? poliId;
+
+  const ProfileDokterPage({
+    Key? key,
+    required this.dokterId,
+    required this.poliId,
+  }) : super(key: key);
 
   @override
   State<ProfileDokterPage> createState() => _ProfileDokterPageState();
@@ -15,6 +24,7 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
 
   @override
   initState() {
+    BlocProvider.of<ReservasiBloc>(context).add(GetDetailDokterEvent(widget.dokterId));
     super.initState();
   }
 
@@ -61,139 +71,167 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
           Image.asset(AppAssets.bgHeader, fit: BoxFit.cover),
           Expanded(
             child: SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                color: Theme.of(context).colorScheme.background,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.account_circle,
-                      size: 120,
-                      color: Colors.grey,
-                    ),
-                    Text(
-                      'dr. Angelina, SpA',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    IntrinsicHeight(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: BlocBuilder<ReservasiBloc, ReservasiState>(
+                builder: (context, state) {
+                  if (state is ResultGetDetailDokterState) {
+                    List<Widget> groupPoli = [];
+                    var headerGroup = [];
+                    for (var gp in state.data.jadwal!) {
+                      if (!headerGroup.contains(gp.poli)) {
+                        groupPoli.add(Padding(
+                          padding: const EdgeInsets.only(top: 20, bottom: 5),
+                          child: Text(
+                            'POLI ' + gp.poli.toString(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ));
+                        headerGroup.add(gp.poli);
+                      }
+                      groupPoli.add(
+                        Column(
+                          children: [
+                            const Divider(thickness: 1),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    (gp.hari.toString()).toUpperCase(),
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    gp.jamAwal.toString().substring(0, 5) +
+                                        ' - ' +
+                                        gp.jamAkhir.toString().substring(0, 5),
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.secondary,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return Container(
+                      padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
+                      color: Theme.of(context).colorScheme.background,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              '- Spesialis Anak\n- Telemedicine',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.w500,
+                          SizedBox(
+                            height: 120,
+                            width: 120,
+                            child: state.data.avatar != null
+                                ? Image.network(state.data.avatar.toString())
+                                : const Icon(
+                                    Icons.account_circle,
+                                    size: 120,
+                                    color: Colors.grey,
+                                  ),
+                          ),
+                          Text(
+                            state.data.nama.toString(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          IntrinsicHeight(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    state.data.spesialis.toString(),
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.secondary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Image.asset(
+                                    state.data.icon ?? AppAssets.baby,
+                                    width: 60,
+                                    height: 60,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'JADWAL PRAKTEK',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                                primary: Theme.of(context).colorScheme.secondary,
+                                textStyle: const TextStyle(fontSize: 18),
+                              ),
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ReservasiPage(
+                                      dokterId: widget.dokterId.toString(),
+                                      poliId: widget.poliId.toString(),
+                                    ),
+                                  ),
+                                );
+                                BlocProvider.of<ReservasiBloc>(context)
+                                    .add(GetDetailDokterEvent(widget.dokterId));
+                              },
+                              child: const Text(
+                                'Buat Jadwal Reservasi',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
-                          Flexible(
-                            flex: 1,
-                            child: Image.asset(
-                              AppAssets.baby,
-                              width: 60,
-                              height: 60,
-                            ),
+                          const SizedBox(height: 15),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: groupPoli.toList(),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'JADWAL PRAKTEK',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                          primary: Theme.of(context).colorScheme.secondary,
-                          textStyle: const TextStyle(fontSize: 18),
-                        ),
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const ReservasiPage()));
-                        },
-                        child: const Text(
-                          'Buat Jadwal Reservasi',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        {
-                          'hari': 'Senin',
-                          'jam': '16.00 - 17.00\n17.00 - 18.00',
-                        },
-                        {
-                          'hari': 'Selasa',
-                          'jam': '16.00 - 17.00\n17.00 - 18.00',
-                        },
-                        {
-                          'hari': 'Rabu',
-                          'jam': '16.00 - 17.00\n17.00 - 18.00',
-                        },
-                        {
-                          'hari': 'Sabtu',
-                          'jam': '16.00 - 17.00\n17.00 - 18.00',
-                        },
-                      ].map(
-                        (v) {
-                          return Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      (v['hari'] as String).toUpperCase(),
-                                      style: TextStyle(
-                                        color: Theme.of(context).colorScheme.primary,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      v['jam'] as String,
-                                      style: TextStyle(
-                                        color: Theme.of(context).colorScheme.secondary,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Divider(thickness: 2),
-                            ],
-                          );
-                        },
-                      ).toList(),
-                    ),
-                  ],
-                ),
+                    );
+                  }
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Sedang Memuat data...'),
+                  );
+                },
               ),
             ),
           ),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bwcc_app/bloc/auth_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
+import 'package:bwcc_app/models/form_register.dart';
 import 'package:bwcc_app/ui/pages/auth_page.dart';
 import 'package:bwcc_app/ui/pages/splash_page.dart';
 import 'package:bwcc_app/ui/widgets/text_field.dart';
@@ -85,16 +86,13 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
+  FormRegister formRegister = FormRegister();
   bool _showPassword = true;
-  String _email = '';
-  String _password = '';
   String _repeatPassword = '';
-  String _phone = '';
-  String _fullName = '';
   bool _acc = false;
 
   _isValid() {
-    return _email.isNotEmpty && _password.isNotEmpty;
+    return true;
   }
 
   @override
@@ -118,9 +116,8 @@ class _RegisterFormState extends State<RegisterForm> {
             },
             inputType: TextInputType.emailAddress,
             onChanged: (value) {
-              setState(() {
-                _email = value!;
-              });
+              formRegister.email = value!;
+              setState(() {});
             },
           ),
           const SizedBox(height: 20),
@@ -141,15 +138,14 @@ class _RegisterFormState extends State<RegisterForm> {
               if (value == null || value.isEmpty) {
                 return 'Password tidak boleh kosong';
               }
-              if (value.length < 6) {
-                return 'Password minimal 6 karakter';
+              if (value.length < 8) {
+                return 'Password minimal 8 karakter';
               }
               return null;
             },
             onChanged: (value) {
-              setState(() {
-                _password = value!;
-              });
+              formRegister.password = value!;
+              setState(() {});
             },
           ),
           const SizedBox(height: 20),
@@ -170,10 +166,10 @@ class _RegisterFormState extends State<RegisterForm> {
               if (value == null || value.isEmpty) {
                 return 'Password tidak boleh kosong';
               }
-              if (value.length < 6) {
-                return 'Password minimal 6 karakter';
+              if (value.length < 8) {
+                return 'Password minimal 8 karakter';
               }
-              if (_repeatPassword != _password) {
+              if (_repeatPassword != formRegister.password) {
                 return 'Password tidak sama';
               }
               return null;
@@ -199,7 +195,7 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             initialCountryCode: 'ID',
             onChanged: (phone) {
-              _phone = phone.completeNumber;
+              formRegister.noHandphone = phone.completeNumber;
               setState(() {});
             },
             showCountryFlag: false,
@@ -227,11 +223,10 @@ class _RegisterFormState extends State<RegisterForm> {
               }
               return null;
             },
-            inputType: TextInputType.emailAddress,
+            inputType: TextInputType.text,
             onChanged: (value) {
-              setState(() {
-                _email = value!;
-              });
+              formRegister.username = value!;
+              setState(() {});
             },
           ),
           const SizedBox(height: 15),
@@ -313,12 +308,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                   ),
                   onPressed: _isValid()
-                      ? (loading
-                          ? () => {}
-                          : () => context.read<AuthBloc>().add(LoginEvent(
-                                _email,
-                                _password,
-                              )))
+                      ? (loading ? () => {} : () => context.read<AuthBloc>().add(RegisterEvent(formRegister)))
                       : null,
                   child: loading
                       ? Row(

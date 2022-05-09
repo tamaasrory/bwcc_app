@@ -4,7 +4,8 @@ Widget textFieldWidget(
   context, {
   String? Function(String?)? validator,
   required String hint,
-  required Function(String?)? onChanged,
+  Function(String?)? onChanged,
+  Function()? onTap,
   String? label,
   Widget? customelabel,
   TextInputType? inputType,
@@ -49,6 +50,7 @@ Widget textFieldWidget(
     validator: validator,
     keyboardType: inputType ?? TextInputType.text,
     onChanged: onChanged,
+    onTap: onTap,
   ));
   return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: widget);
 }

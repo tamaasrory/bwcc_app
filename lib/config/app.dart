@@ -27,14 +27,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 
 class AppConfig {
+  static String baseUrl = "http://127.0.0.1/bwcc";
   // static String baseUrl = "http://192.168.43.209/bwcc";
-  static String baseUrl = "https://bwcc.tncdigital.id";
+  // static String baseUrl = "https://bwcc.tncdigital.id";
   static String baseApiPath = "/api/1.0/";
 
   static String prefIsLogged = 'isLogged';
   static String prefUser = 'user';
 
-  static int timeout = 10; // detik
+  static int timeout = 60; // detik
 
   static Future<PackageInfo> getAppDetail() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -67,12 +68,12 @@ class ApiService {
   static Future<http.Response> get(String path, {Map<String, String>? query}) async {
     try {
       var apiUrl = Urls.api(path);
-      logApp('ApiService GET => uri.authority => ${apiUrl.authority} ; uri.path => ${apiUrl.path}');
+      // logApp('ApiService GET => uri.authority => ${apiUrl.authority} ; uri.path => ${apiUrl.path}');
       apiUrl = Uri.http(apiUrl.authority, apiUrl.path, query);
       var response = await http
           .get(apiUrl, headers: await getApiHeaders())
           .timeout(Duration(seconds: AppConfig.timeout), onTimeout: _timeOut);
-      logApp('Future<http.Response> GET $path => ' + response.body);
+      logApp('Future<http.Response> GET $path $query => ' + response.body);
       return response;
     } catch (e) {
       logApp('Future<http.Response> GET $path ERROR => ' + e.toString());
@@ -85,7 +86,7 @@ class ApiService {
       var response = await http
           .post(Urls.api(path), body: query, headers: await getApiHeaders())
           .timeout(Duration(seconds: AppConfig.timeout), onTimeout: _timeOut);
-      logApp('Future<http.Response> post $path => ' + response.body);
+      logApp('Future<http.Response> post $path $query => ' + response.body);
       return response;
     } catch (e) {
       logApp('Future<http.Response> post $path ERROR => ' + e.toString());
@@ -126,7 +127,7 @@ class ApiService {
     try {
       String dataUser = preferences.getString(AppConfig.prefUser)!;
       User user = User();
-      logApp('getApiHeaders => ' + dataUser);
+      // logApp('getApiHeaders => ' + dataUser);
       user = User.fromJson(jsonDecode(dataUser));
       token = user.accessToken;
     } catch (e) {
@@ -138,7 +139,7 @@ class ApiService {
       // 'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     };
-    logApp('getApiHeaders => ' + jsonEncode(headers));
+    // logApp('getApiHeaders => ' + jsonEncode(headers));
     return headers;
   }
 
@@ -162,6 +163,7 @@ Size mediaSize(context) {
 class Urls {
   static Uri api(String route) => Uri.parse(AppConfig.baseUrl + AppConfig.baseApiPath + route.trim());
   static String photo(String? name) => '${AppConfig.baseUrl}/profile/$name';
+  static String getIcon(String? path) => '${AppConfig.baseUrl}$path';
 }
 
 String fileToBase64(String path) {
@@ -170,7 +172,8 @@ String fileToBase64(String path) {
 }
 
 validMail(String email) {
-  bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+  bool emailValid =
+      RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
   return emailValid;
 }
 
@@ -180,8 +183,8 @@ double rad2deg(r) => (r * (180.0 / pi));
 
 double distanceCalculate(double lat1, double lon1, double lat2, double lon2) {
   double theta = lon1 - lon2;
-  double miles =
-      (sin(deg2rad(lat1)) * sin(deg2rad(lat2))) + (cos(deg2rad(lat1)) * cos(deg2rad(lat2)) * cos(deg2rad(theta)));
+  double miles = (sin(deg2rad(lat1)) * sin(deg2rad(lat2))) +
+      (cos(deg2rad(lat1)) * cos(deg2rad(lat2)) * cos(deg2rad(theta)));
   miles = acos(miles);
   miles = rad2deg(miles);
   miles = miles * 60 * 1.1515;

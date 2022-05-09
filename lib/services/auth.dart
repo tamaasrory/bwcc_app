@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:bwcc_app/models/form_register.dart';
+
 import '../config/app.dart';
 import '../models/responses.dart';
 import '../models/user.dart';
@@ -34,6 +36,44 @@ class AuthService {
         return Responses<User>(
           condition: false,
           message: 'Tidak dapat melakukan login',
+          results: null,
+        );
+      }
+    } catch (e) {
+      logApp('message ERROR => ' + e.toString());
+      return Responses<User>(
+        condition: false,
+        message: getMessage(e),
+        results: null,
+      );
+    }
+  }
+
+  // post 
+  static Future<Responses<User>> register({
+    required FormRegister formRegister
+  }) async {
+    try {
+      var response = await ApiService.post("register", formRegister.toJson());
+
+      if (response.statusCode == 200) {
+        var jsonObject = jsonDecode(response.body);
+        // ignore: prefer_typing_uninitialized_variables
+        var results;
+        if (jsonObject['results'] != null) {
+          results = (jsonObject as Map<String, dynamic>)['results'];
+          results = User.fromJson(results);
+        }
+
+        return Responses<User>(
+          condition: jsonObject['condition'] as bool,
+          message: jsonObject['message'],
+          results: results,
+        );
+      } else {
+        return Responses<User>(
+          condition: false,
+          message: 'Tidak dapat melakukan pendaftaran',
           results: null,
         );
       }

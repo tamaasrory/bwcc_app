@@ -1,5 +1,49 @@
 import 'package:flutter/material.dart';
 
+dialogContent(
+  context, {
+  String title = 'Pesan',
+  String messages = 'Ahlan wa sahlan...',
+  bool dismissable = true,
+  // bool withProgress = false,
+  required Widget contents,
+  List<Widget>? actions,
+  EdgeInsetsGeometry? contentPadding,
+  TextStyle? titleTextStyle,
+  Color? backgroundColor,
+}) {
+  // List<Widget> contents = [];
+  // if (withProgress) {
+  //   contents.add(const CircularProgressIndicator());
+  // }
+  // contents.add(Flexible(child: Text(messages)));
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Container(
+      child: Text(title),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      color: backgroundColor,
+    ),
+    titlePadding: EdgeInsets.zero,
+    titleTextStyle: titleTextStyle,
+    content: contents,
+    actions: actions,
+    contentPadding: contentPadding ?? const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    barrierDismissible: dismissable,
+    builder: (context) {
+      return WillPopScope(
+        onWillPop: () async => dismissable,
+        child: alert,
+      );
+    },
+  );
+}
+
 dialogInfo(
   context, {
   String title = 'Pesan',

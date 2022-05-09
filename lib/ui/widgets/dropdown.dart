@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/ui/widgets/color_full_label.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +35,7 @@ Widget dropdownField(
 
 List<DropdownMenuItem<Object>> dropdownMenuItem(List<Map<String, dynamic>> items, itemValue, itemText) {
   return items.map((val) {
-    logApp('BACAAA => ' + val['text']);
+    logApp('SELECT MODELS => ' + jsonEncode(val));
     return DropdownMenuItem(
       value: itemValue != null ? itemValue(val) : val['value'],
       child: Text(itemText != null ? itemText(val) : val['text']),

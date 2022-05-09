@@ -35,7 +35,7 @@ class AppDateTime {
     'keempat'
   ];
 
-  AppDateTime({DateTime? dateTime}) {
+  AppDateTime(DateTime parse, {DateTime? dateTime}) {
     // logApp('dateTime => ' + dateTime.toString());
     this.dateTime = dateTime ?? DateTime.now();
   }
