@@ -23,7 +23,7 @@ class Dokter {
         id: json["id"].toString(),
         avatar: json["avatar"],
         icon: json["icon"] ?? AppAssets.baby,
-        spesialis: json["spesialis"] ?? '',
+        spesialis: json["spesialis"],
         nama: json["nama"].toString(),
         createdBy: json["created_by"].toString(),
         updatedBy: json["updated_by"].toString(),

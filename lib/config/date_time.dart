@@ -1,17 +1,10 @@
+import 'package:bwcc_app/config/app.dart';
 import 'package:intl/intl.dart';
 
 class AppDateTime {
   late DateTime dateTime;
 
-  static const List<String> _hari = [
-    'Senin',
-    'Selasa',
-    'Rabu',
-    'Kamis',
-    'Jumat',
-    'Sabtu',
-    'Minggu'
-  ];
+  static const List<String> _hari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
 
   static const List<String> _bulan = [
     'Januari',
@@ -28,16 +21,18 @@ class AppDateTime {
     'Desember'
   ];
 
-  static const List<String> _kuartal = [
-    'pertama',
-    'kedua',
-    'ketiga',
-    'keempat'
-  ];
+  static const List<String> _kuartal = ['pertama', 'kedua', 'ketiga', 'keempat'];
 
-  AppDateTime(DateTime parse, {DateTime? dateTime}) {
-    // logApp('dateTime => ' + dateTime.toString());
-    this.dateTime = dateTime ?? DateTime.now();
+  AppDateTime(var datetime) {
+    if (datetime != null) {
+      if (datetime is String) {
+        datetime = DateTime.parse(datetime);
+      }
+    } else {
+      datetime = DateTime.now();
+    }
+    // logApp('dateTime => ' + datetime.toString());
+    dateTime = datetime;
   }
 
   String e() => _hari[dateTime.weekday - 1].substring(0, 3);
@@ -45,8 +40,7 @@ class AppDateTime {
   String lll() => _bulan[dateTime.month - 1].substring(0, 3);
   String llll() => _bulan[dateTime.month - 1];
   String mmm() => _bulan[dateTime.month - 1].substring(0, 3);
-  String mmmd() =>
-      '${dateTime.day.toString()} ${_bulan[dateTime.month - 1].substring(0, 3)}';
+  String mmmd() => '${dateTime.day.toString()} ${_bulan[dateTime.month - 1].substring(0, 3)}';
   String mmmed() =>
       '${_hari[dateTime.weekday - 1].substring(0, 3)}, ${dateTime.day.toString()} ${_bulan[dateTime.month - 1].substring(0, 3)}';
   String mmmm() => _bulan[dateTime.month - 1];
@@ -54,19 +48,16 @@ class AppDateTime {
   String mmmmeeeed() =>
       '${_hari[dateTime.weekday - 1]}, ${dateTime.day.toString()} ${_bulan[dateTime.month - 1]}';
   String qqqq() => 'Kuartal ${_kuartal[((dateTime.month - 1) / 3).floor()]}';
-  String yMd() =>
-      '${dateTime.day.toString()}/${dateTime.month.toString()}/${dateTime.year.toString()}';
+  String yMd() => '${dateTime.day.toString()}/${dateTime.month.toString()}/${dateTime.year.toString()}';
   String yMEd() =>
       '${_hari[dateTime.weekday - 1].substring(0, 3)}, ${dateTime.day.toString()}/${dateTime.month.toString()}/${dateTime.year.toString()}';
-  String yMMM() =>
-      '${_bulan[dateTime.month - 1].substring(0, 3)} ${dateTime.year.toString()}';
+  String yMMM() => '${_bulan[dateTime.month - 1].substring(0, 3)} ${dateTime.year.toString()}';
   String yMMMd() =>
       '${dateTime.day.toString()} ${_bulan[dateTime.month - 1].substring(0, 3)} ${dateTime.year.toString()}';
   String yMMMEd() =>
       '${_hari[dateTime.weekday - 1].substring(0, 3)}, ${dateTime.day.toString()} ${_bulan[dateTime.month - 1].substring(0, 3)} ${dateTime.year.toString()}';
   String yMMMM() => '${_bulan[dateTime.month - 1]} ${dateTime.year.toString()}';
-  String yMMMMd() =>
-      '${dateTime.day.toString()} ${_bulan[dateTime.month - 1]} ${dateTime.year.toString()}';
+  String yMMMMd() => '${dateTime.day.toString()} ${_bulan[dateTime.month - 1]} ${dateTime.year.toString()}';
   String yMMMMEEEEd() =>
       '${_hari[dateTime.weekday - 1]}, ${dateTime.day.toString()} ${_bulan[dateTime.month - 1]} ${dateTime.year.toString()}';
 
@@ -78,7 +69,6 @@ class AppDateTime {
         .replaceAll('LLL', "'${lll()}'")
         .replaceAll('MMMM', "'${mmmm()}'")
         .replaceAll('MMM', "'${mmm()}'");
-
     return DateFormat(format).format(dateTime);
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'dart:ffi';
 import 'dart:math';
 
 import 'dart:io' as io;
@@ -150,6 +151,71 @@ class ApiService {
   static FutureOr<http.StreamedResponse> _timeOutStream() {
     throw 'timeout';
   }
+}
+
+removeData(String key) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  return preferences.remove(key);
+}
+
+saveData<T>(String key, T value) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  switch (T) {
+    case String:
+      logApp('save data String => $value');
+      preferences.setString(key, value as String);
+      break;
+    case bool:
+      logApp('save data bool => $value');
+      preferences.setBool(key, value as bool);
+      break;
+    case int:
+      logApp('save data int => $value');
+      preferences.setInt(key, value as int);
+      break;
+    case double:
+      logApp('save data double => $value');
+      preferences.setDouble(key, value as double);
+      break;
+    case List<String>:
+      logApp('save data List => $value');
+      preferences.setStringList(key, value as List<String>);
+      break;
+    default:
+      logApp('save data default => $value');
+      preferences.setString(key, value.toString());
+  }
+}
+
+getData<T>(String key) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  var tmp = null;
+  switch (T) {
+    case String:
+      tmp = preferences.getString(key);
+      logApp('get data String => $key $tmp');
+      break;
+    case bool:
+      tmp = preferences.getBool(key);
+      logApp('get data bool => $key $tmp');
+      break;
+    case int:
+      tmp = preferences.getInt(key);
+      logApp('get data int => $key $tmp');
+      break;
+    case double:
+      tmp = preferences.getDouble(key);
+      logApp('get data double => $key $tmp');
+      break;
+    case List<String>:
+      tmp = preferences.getStringList(key);
+      logApp('get data List => $key $tmp');
+      break;
+    default:
+      tmp = preferences.getString(key);
+      logApp('get data default => $key $tmp');
+  }
+  return tmp;
 }
 
 routeTo(Widget page) {

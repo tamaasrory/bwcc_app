@@ -38,4 +38,40 @@ class ArtikelService {
       );
     }
   }
+
+
+  static Future<Responses<RiwayatReservasi>> getDetailRiwayat({required String noReservasi}) async {
+    try {
+      var response = await ApiService.get("reservasi/detail", query: {'no_reservasi': noReservasi});
+
+      if (response.statusCode == 200) {
+        var jsonObject = jsonDecode(response.body);
+        // ignore: prefer_typing_uninitialized_variables
+        var results;
+        if (jsonObject['results'] != null) {
+          results = (jsonObject as Map<String, dynamic>)['results'];
+          results = RiwayatReservasi.fromJson(results);
+        }
+
+        return Responses<RiwayatReservasi>(
+          condition: jsonObject['condition'] as bool,
+          message: jsonObject['message'],
+          results: results,
+        );
+      } else {
+        return Responses<RiwayatReservasi>(
+          condition: false,
+          message: 'Tidak dapat melakukan login',
+          results: null,
+        );
+      }
+    } catch (e) {
+      logApp('message ERROR => ' + e.toString());
+      return Responses<RiwayatReservasi>(
+        condition: false,
+        message: getMessage(e),
+        results: null,
+      );
+    }
+  }
 }

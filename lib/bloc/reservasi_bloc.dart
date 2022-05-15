@@ -5,7 +5,9 @@ import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/models/detail_dokter.dart';
 import 'package:bwcc_app/models/dokter.dart';
 import 'package:bwcc_app/models/form_reservasi.dart';
-import 'package:bwcc_app/models/poli.dart';
+import 'package:bwcc_app/models/pasien.dart';
+import 'package:bwcc_app/models/riwayat_reservasi.dart';
+import 'package:bwcc_app/models/select.dart';
 import 'package:bwcc_app/services/reservasi.dart';
 import 'package:equatable/equatable.dart';
 
@@ -24,6 +26,22 @@ class ReservasiBloc extends Bloc<ReservasiEvent, ReservasiState> {
       }
     });
 
+    on<GetRiwayatEvent>((event, emit) async {
+      var response = await ReservasiService.getRiwayat();
+      logApp('on<GetRiwayatEvent> ' + jsonEncode(response));
+      if (response.condition) {
+        emit(ResultRiwayatReservasiState(response.results!));
+      }
+    });
+
+    on<GetDetailRiwayatEvent>((event, emit) async {
+      var response = await ReservasiService.getDetailRiwayat(noReservasi: event.noReservasi);
+      logApp('on<GetDetailRiwayatEvent> ' + jsonEncode(response));
+      if (response.condition) {
+        emit(ResultDetailRiwayatState(response.results!));
+      }
+    });
+
     on<GetPoliEvent>((event, emit) async {
       var response = await ReservasiService.getAllPoli();
       logApp('on<GetPoliEvent> ' + jsonEncode(response));
@@ -37,6 +55,14 @@ class ReservasiBloc extends Bloc<ReservasiEvent, ReservasiState> {
       logApp('on<GetPembayaranEvent> ' + jsonEncode(response));
       if (response.condition) {
         emit(ResultGetMetodePembayaranState(response.results!));
+      }
+    });
+
+    on<GetDaftarKeluargaEvent>((event, emit) async {
+      var response = await ReservasiService.getDaftarKeluarga();
+      logApp('on<GetDaftarKeluargaEvent> ' + jsonEncode(response));
+      if (response.condition) {
+        emit(ResultGetDaftarKeluargaState(response.results!));
       }
     });
 

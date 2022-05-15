@@ -21,6 +21,19 @@ class GetPoliEvent extends ReservasiEvent {}
 
 class GetMetodePembayaranEvent extends ReservasiEvent {}
 
+class GetDaftarKeluargaEvent extends ReservasiEvent {}
+
+class GetRiwayatEvent extends ReservasiEvent {}
+
+class GetDetailRiwayatEvent extends ReservasiEvent {
+  final String noReservasi;
+
+  @override
+  List<Object> get props => [noReservasi];
+
+  const GetDetailRiwayatEvent(this.noReservasi);
+}
+
 class PostReservasiEvent extends ReservasiEvent {
   final FormReservasi formReservasi;
   const PostReservasiEvent(this.formReservasi);

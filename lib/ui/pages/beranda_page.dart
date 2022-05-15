@@ -5,6 +5,8 @@ import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/models/layanan_kami.dart';
 import 'package:bwcc_app/models/user.dart';
+import 'package:bwcc_app/ui/pages/artikel_page.dart';
+import 'package:bwcc_app/ui/pages/promo_page.dart';
 import 'package:bwcc_app/ui/pages/reservasi_page.dart';
 import 'package:bwcc_app/ui/widgets/banner_artikel.dart';
 import 'package:bwcc_app/ui/widgets/banner_infopromo.dart';
@@ -157,14 +159,14 @@ class _BerandaPageState extends State<BerandaPage> {
                   'icon': Icons.discount,
                   'label': 'Promo',
                   'onPressed': () {
-                    logApp('run....');
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PromoPage()));
                   },
                 },
                 {
                   'icon': Icons.newspaper,
                   'label': 'Artikel',
                   'onPressed': () {
-                    logApp('run....');
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ArtikelPage()));
                   },
                 },
               ].map((e) {

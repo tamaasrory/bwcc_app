@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class RiwayatPage extends StatefulWidget {
-  const RiwayatPage({Key? key}) : super(key: key);
+class PromoPage extends StatefulWidget {
+  const PromoPage({Key? key}) : super(key: key);
 
   @override
-  State<RiwayatPage> createState() => _RiwayatPageState();
+  State<PromoPage> createState() => _PromoPageState();
 }
 
-class _RiwayatPageState extends State<RiwayatPage> {
+class _PromoPageState extends State<PromoPage> {
   bool loadImgProfile = false;
 
   @override
@@ -45,12 +45,12 @@ class _RiwayatPageState extends State<RiwayatPage> {
                     TextButton(
                       style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0)),
                       onPressed: () {
-                        // Navigator.pop(context, false);
+                        Navigator.pop(context, false);
                       },
                       child: Image.asset(AppAssets.backWhite, width: 32, height: 32),
                     ),
                     const Text(
-                      'RIWAYAT',
+                      'DAFTAR PROMO',
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.white,

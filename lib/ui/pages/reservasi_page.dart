@@ -4,10 +4,14 @@ import 'package:bwcc_app/bloc/auth_bloc.dart';
 import 'package:bwcc_app/bloc/bottom_navbar_bloc.dart';
 import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
+import 'package:bwcc_app/config/date_time.dart';
 import 'package:bwcc_app/models/form_reservasi.dart';
-import 'package:bwcc_app/models/poli.dart';
+import 'package:bwcc_app/models/pasien.dart';
+import 'package:bwcc_app/models/select.dart';
 import 'package:bwcc_app/models/user.dart';
+import 'package:bwcc_app/ui/pages/detail_reservasi_page.dart';
 import 'package:bwcc_app/ui/widgets/color_full_label.dart';
+import 'package:bwcc_app/ui/widgets/datetimepicker.dart';
 import 'package:bwcc_app/ui/widgets/dropdown.dart';
 import 'package:bwcc_app/ui/widgets/text_field.dart';
 import 'package:date_time_picker/date_time_picker.dart';
@@ -34,37 +38,46 @@ class _ReservasiPageState extends State<ReservasiPage> {
   String selectedHari = 'null';
   List _tglAvailable = [];
   DateTime? initialSelectHari;
+  DateTime? initialTglLahir;
 
-  String selectedPoli = 'null';
   List<Select> _pilihanPoli = [
     Select(text: 'PILIH POLI', value: 'null'),
   ];
 
-  String selectedDokter = 'null';
   List<Select> _pilihanDokter = [
     Select(text: 'PILIH DOKTER', value: 'null'),
   ];
 
-  String selectedWaktu = 'null';
   List<Select> _pilihanWaktu = [
     Select(text: 'PILIH WAKTU', value: 'null'),
   ];
 
-  String selectedPayment = 'null';
   List<Select> _pilihanPayment = [
     Select(text: 'PILIH JENIS PEMBAYARAN', value: 'null'),
+  ];
+
+  List<SelectPasien> _pilihanPasien = [
+    SelectPasien(text: 'PILIH PASIEN', value: 'null'),
   ];
 
   @override
   initState() {
     BlocProvider.of<ReservasiBloc>(context).add(GetPoliEvent());
     BlocProvider.of<ReservasiBloc>(context).add(GetMetodePembayaranEvent());
+    BlocProvider.of<ReservasiBloc>(context).add(GetDaftarKeluargaEvent());
+    if (mounted) {
+      formReservasi.kuotaId = 'null';
+      formReservasi.nama = 'null';
+      formReservasi.asuransiId = 'null';
+      initialTglLahir = DateTime.now();
+      setState(() {});
+    }
     super.initState();
   }
 
-  getText(List<dynamic> data, val) {
+  getValue(List<dynamic> data, val) {
     int index = data.indexWhere((element) => element.value == val);
-    return data[index].text;
+    return data[index];
   }
 
   _isValid() {
@@ -77,6 +90,9 @@ class _ReservasiPageState extends State<ReservasiPage> {
       statusBarColor: Colors.transparent, // status bar color
       statusBarIconBrightness: Brightness.dark,
     ));
+    var _state = BlocProvider.of<AuthBloc>(context).state;
+    AuthAttampState authState = (_state is AuthAttampState) ? _state : AuthAttampState(data: User());
+    formReservasi.namaPenanggungjawab = authState.data.username;
 
     return Scaffold(
       body: Column(
@@ -129,23 +145,21 @@ class _ReservasiPageState extends State<ReservasiPage> {
                               Select(text: 'PILIH POLI', value: 'null'),
                             ];
                             _pilihanPoli.addAll(state.data);
-                            selectedPoli = widget.poliId.toString();
-                            formReservasi.poliId = selectedPoli;
+                            formReservasi.poliId = widget.poliId.toString();
                             setState(() {});
-                            if (selectedPoli != 'null') {
+                            if (formReservasi.poliId != 'null') {
                               BlocProvider.of<ReservasiBloc>(context).add(
                                 GetDokterReservasiEvent(
-                                  poliId: selectedPoli.toString(),
+                                  poliId: formReservasi.poliId.toString(),
                                 ),
                               );
                             }
                           }
                         }
                       },
-                      child: dropdownField(
-                        context,
-                        label: ['Pilih ', 'Poli'],
-                        value: selectedPoli,
+                      child: SelectWidget(
+                        label: const ['Pilih ', 'Poli'],
+                        value: formReservasi.poliId,
                         items: _pilihanPoli.map((e) => e.toJson()).toList(),
                         itemText: (v) =>
                             (v['text'] as String).contains('POLI') ? v['text'] : 'POLI ' + v['text'],
@@ -156,9 +170,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
                             ),
                           );
                           formReservasi.poliId = newValue.toString();
-                          setState(() {
-                            selectedPoli = newValue.toString();
-                          });
+                          setState(() {});
                         },
                       ),
                     ),
@@ -171,34 +183,30 @@ class _ReservasiPageState extends State<ReservasiPage> {
                               Select(text: 'PILIH DOKTER', value: 'null'),
                             ];
                             _pilihanDokter.addAll(state.data);
-                            selectedDokter = widget.dokterId.toString();
-                            formReservasi.dokterId = selectedDokter;
+                            formReservasi.dokterId = widget.dokterId.toString();
                             setState(() {});
-                            if (selectedDokter != 'null') {
+                            if (formReservasi.dokterId != 'null') {
                               BlocProvider.of<ReservasiBloc>(context).add(
                                 GetHariReservasiEvent(
-                                  dokId: selectedDokter.toString(),
-                                  poliId: selectedPoli,
+                                  dokId: formReservasi.dokterId.toString(),
+                                  poliId: formReservasi.poliId.toString(),
                                 ),
                               );
                             }
                           }
                         }
                       },
-                      child: dropdownField(
-                        context,
-                        label: ['Pilih ', 'Dokter'],
-                        value: selectedDokter,
+                      child: SelectWidget(
+                        label: const ['Pilih ', 'Dokter'],
+                        value: formReservasi.dokterId,
                         items: _pilihanDokter.map((e) => e.toJson()).toList(),
                         onChanged: (newValue) {
                           BlocProvider.of<ReservasiBloc>(context).add(GetHariReservasiEvent(
                             dokId: newValue.toString(),
-                            poliId: selectedPoli,
+                            poliId: formReservasi.poliId.toString(),
                           ));
                           formReservasi.dokterId = newValue.toString();
-                          setState(() {
-                            selectedDokter = newValue.toString();
-                          });
+                          setState(() {});
                         },
                       ),
                     ),
@@ -238,8 +246,8 @@ class _ReservasiPageState extends State<ReservasiPage> {
                         },
                         onChanged: (val) {
                           BlocProvider.of<ReservasiBloc>(context).add(GetWaktuReservasiEvent(
-                            dokId: selectedDokter,
-                            poliId: selectedPoli,
+                            dokId: formReservasi.dokterId.toString(),
+                            poliId: formReservasi.poliId.toString(),
                             hari: val,
                           ));
                           formReservasi.hari = val;
@@ -257,7 +265,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
                       listener: (context, state) {
                         if (state is ResultGetWaktuState) {
                           if (state.data.isNotEmpty) {
-                            selectedWaktu = 'null';
+                            formReservasi.kuotaId = 'null';
                             _pilihanWaktu = [
                               Select(text: 'PILIH WAKTU', value: 'null'),
                             ];
@@ -266,63 +274,68 @@ class _ReservasiPageState extends State<ReservasiPage> {
                           }
                         }
                       },
-                      child: dropdownField(
-                        context,
-                        label: ['Pilih ', 'Waktu'],
-                        value: selectedWaktu,
+                      child: SelectWidget(
+                        label: const ['Pilih ', 'Waktu'],
+                        value: formReservasi.kuotaId,
                         items: _pilihanWaktu.map((e) => e.toJson()).toList(),
                         onChanged: (newValue) {
                           formReservasi.kuotaId = newValue.toString();
-                          setState(() {
-                            selectedWaktu = newValue.toString();
-                          });
+                          setState(() {});
                         },
                       ),
                     ),
                     const SizedBox(height: 10),
-                    textFieldWidget(
-                      context,
+                    TextFieldWidget(
                       customelabel: richLable(context, 'Nama ', 'Penanggung Jawab'),
                       hint: 'Masukkan nama Penanggung Jawab',
+                      value: formReservasi.namaPenanggungjawab,
+                      readonly: true,
                       onChanged: (newValue) {
                         formReservasi.namaPenanggungjawab = newValue.toString();
                         setState(() {});
                       },
                     ),
                     const SizedBox(height: 10),
-                    textFieldWidget(
-                      context,
-                      customelabel: richLable(context, 'Nama Lengkap ', 'Pasien'),
-                      hint: 'Masukkan nama lengkap pasien',
-                      onChanged: (newValue) {
-                        formReservasi.nama = newValue.toString();
-                        setState(() {});
+                    // TextFieldWidget(
+                    //   customelabel: richLable(context, 'Nama Lengkap ', 'Pasien'),
+                    //   hint: 'Masukkan nama lengkap pasien',
+                    //   onChanged: (newValue) {
+                    //     formReservasi.nama = newValue.toString();
+                    //     setState(() {});
+                    //   },
+                    // ),
+                    BlocListener<ReservasiBloc, ReservasiState>(
+                      listener: (context, state) {
+                        if (state is ResultGetDaftarKeluargaState) {
+                          if (state.data.isNotEmpty) {
+                            _pilihanPasien = [
+                              SelectPasien(text: 'PILIH PASIEN', value: 'null'),
+                            ];
+                            _pilihanPasien.addAll(state.data);
+                            setState(() {});
+                          }
+                        }
                       },
+                      child: SelectWidget(
+                        label: const ['Pilih ', 'Pasien'],
+                        value: formReservasi.nama,
+                        items: _pilihanPasien.map((e) => e.toJson()).toList(),
+                        onChanged: (newValue) {
+                          formReservasi.nama = newValue.toString();
+                          var tmp = getValue(_pilihanPasien, formReservasi.nama) as SelectPasien;
+                          initialTglLahir = DateTime.parse(tmp.tglLahir.toString());
+                          formReservasi.tglLahir = tmp.tglLahir.toString();
+                          setState(() {});
+                        },
+                      ),
                     ),
                     const SizedBox(height: 10),
                     richLable(context, 'Tanggal Lahir ', 'Pasien'),
-                    DateTimePicker(
-                      type: DateTimePickerType.date,
-                      locale: const Locale('id'),
-                      dateMask: 'dd/MMM/yyyy',
-                      initialValue: null,
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime(2100),
-                      selectableDayPredicate: (date) {
-                        // Disable weekend days to select from the calendar
-                        if (date == DateTime(2022, 5, 10)) {
-                          return false;
-                        }
-
-                        return true;
-                      },
-                      onChanged: (val) {
-                        formReservasi.tglLahir = val.toString();
-                        setState(() {});
-                      },
-                      validator: (val) {
-                        return null;
-                      },
+                    TextFieldWidget(
+                      key: ObjectKey(formReservasi.tglLahir),
+                      hint: 'Pilih Tanggal Lahir',
+                      value: AppDateTime(formReservasi.tglLahir).format('dd/MMM/yyyy'),
+                      readonly: true,
                     ),
                     const SizedBox(height: 15),
                     BlocListener<ReservasiBloc, ReservasiState>(
@@ -337,21 +350,18 @@ class _ReservasiPageState extends State<ReservasiPage> {
                           }
                         }
                       },
-                      child: dropdownField(
-                        context,
-                        label: ['Jenis ', 'Pembayaran'],
-                        value: selectedPayment,
+                      child: SelectWidget(
+                        label: const ['Jenis ', 'Pembayaran'],
+                        value: formReservasi.asuransiId,
                         items: _pilihanPayment.map((e) => e.toJson()).toList(),
                         onChanged: (newValue) {
                           formReservasi.asuransiId = newValue.toString();
-                          selectedPayment = newValue.toString();
                           setState(() {});
                         },
                       ),
                     ),
                     const SizedBox(height: 10),
-                    textFieldWidget(
-                      context,
+                    TextFieldWidget(
                       customelabel: richLable(context, 'Keluhan ', 'Awal'),
                       hint: 'Masukkan keluhan awal',
                       onChanged: (v) {
@@ -369,7 +379,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
                             if (!state.loading) {
                               Future.delayed(const Duration(milliseconds: 1250), () {
                                 setState(() {});
-                                BlocProvider.of<BottomNavbarBloc>(context).add(const BottomNavbarEvent(1));
+                                BlocProvider.of<BottomNavbarBloc>(context).add(const BottomNavbarEvent(2));
                               });
                             } else {
                               setState(() {});
@@ -388,14 +398,10 @@ class _ReservasiPageState extends State<ReservasiPage> {
                           onPressed: _isValid()
                               ? () {
                                   logApp('HASIL FORM DATA => ' + jsonEncode(formReservasi.toJson()));
-                                  var _state = BlocProvider.of<AuthBloc>(context).state;
-                                  AuthAttampState authState =
-                                      (_state is AuthAttampState) ? _state : AuthAttampState(data: User());
-
                                   formReservasi.phone = authState.data.noHandphone;
                                   formReservasi.email = authState.data.email;
                                   formReservasi.jamWaktu =
-                                      getText(_pilihanWaktu, formReservasi.kuotaId.toString());
+                                      getValue(_pilihanWaktu, formReservasi.kuotaId.toString()).text;
                                   setState(() {});
                                   BlocProvider.of<ReservasiBloc>(context)
                                       .add(PostReservasiEvent(formReservasi));

@@ -1,7 +1,7 @@
 import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/models/dokter.dart';
-import 'package:bwcc_app/models/poli.dart';
+import 'package:bwcc_app/models/select.dart';
 import 'package:bwcc_app/ui/pages/profile_dokter_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,10 +39,14 @@ class _CariDokterPageState extends State<CariDokterPage> {
   ];
 
   List<Dokter>? datas;
+  List<Widget>? riwayatPencarian;
 
   @override
   initState() {
     BlocProvider.of<ReservasiBloc>(context).add(GetPoliEvent());
+    if (mounted) {
+      getRiwayatCari();
+    }
     super.initState();
   }
 
@@ -51,13 +55,49 @@ class _CariDokterPageState extends State<CariDokterPage> {
     return data[index].text;
   }
 
+  Future<List<String>?> getRiwayatCari() async {
+    List<String>? data = await getData<List<String>>('pref_riwayatcari');
+    if (data != null) {
+      riwayatPencarian = data.reversed.map((e) {
+        return Padding(
+          padding: const EdgeInsets.only(
+            top: 8,
+          ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 15,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+            ),
+            child: Text(
+              e,
+              style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        );
+      }).toList();
+    } else {
+      riwayatPencarian = null;
+    }
+    setState(() {});
+    return data;
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent, // status bar color
       statusBarIconBrightness: Brightness.dark,
     ));
-    logApp('message ==> RUNNNNN');
 
     return Scaffold(
       body: Column(
@@ -148,6 +188,17 @@ class _CariDokterPageState extends State<CariDokterPage> {
                                   children: datas!.map((v) {
                                     return GestureDetector(
                                       onTap: () async {
+                                        List<String>? prefRC =
+                                            await getData<List<String>>('pref_riwayatcari');
+                                        if (prefRC != null) {
+                                          prefRC.add(v.nama.toString());
+                                          await saveData<List<String>>('pref_riwayatcari', prefRC);
+                                        } else {
+                                          await saveData<List<String>>(
+                                            'pref_riwayatcari',
+                                            [v.nama.toString()],
+                                          );
+                                        }
                                         await Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -161,6 +212,7 @@ class _CariDokterPageState extends State<CariDokterPage> {
                                               poliId: selectedPoli,
                                               hari: selectedHari.toLowerCase(),
                                             ));
+                                        getRiwayatCari();
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(vertical: 5),
@@ -193,6 +245,7 @@ class _CariDokterPageState extends State<CariDokterPage> {
                                                     flex: 4,
                                                     child: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                      mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
                                                         Text(
                                                           v.nama.toString(),
@@ -201,13 +254,16 @@ class _CariDokterPageState extends State<CariDokterPage> {
                                                             color: Theme.of(context).colorScheme.primary,
                                                           ),
                                                         ),
-                                                        const SizedBox(height: 3),
-                                                        Text(
-                                                          v.spesialis.toString(),
-                                                          style: TextStyle(
-                                                            color: Theme.of(context).colorScheme.secondary,
-                                                          ),
-                                                        ),
+                                                        SizedBox(height: v.spesialis != null ? 3 : 0),
+                                                        v.spesialis != null
+                                                            ? Text(
+                                                                v.spesialis.toString(),
+                                                                style: TextStyle(
+                                                                  color:
+                                                                      Theme.of(context).colorScheme.secondary,
+                                                                ),
+                                                              )
+                                                            : const SizedBox(),
                                                       ],
                                                     ),
                                                   ),
@@ -258,9 +314,8 @@ class _CariDokterPageState extends State<CariDokterPage> {
                                 }
                               }
                             },
-                            child: dropdownField(
-                              context,
-                              label: ['Pilih ', 'Poli'],
+                            child: SelectWidget(
+                              label: const ['Pilih ', 'Poli'],
                               value: selectedPoli,
                               // Array list of items
                               items: _pilihanPoli.map((e) => e.toJson()).toList(),
@@ -276,16 +331,14 @@ class _CariDokterPageState extends State<CariDokterPage> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          dropdownField(
-                            context,
-                            label: ['Pilih ', 'Hari'],
+                          SelectWidget(
+                            label: const ['Pilih ', 'Hari'],
                             value: selectedHari,
                             // Array list of items
                             items: _pilihanHari.map((e) => e.toJson()).toList(),
                             // After selecting the desired option,it will
                             // change button value to selected value
                             onChanged: (newValue) {
-                              logApp('SELECTED ====== ' + newValue.toString());
                               setState(() {
                                 selectedHari = newValue.toString();
                               });
@@ -341,21 +394,40 @@ class _CariDokterPageState extends State<CariDokterPage> {
                             ),
                           ),
                           const SizedBox(height: 15),
-                          const Text(
-                            'Riwayat Pencarian',
-                            style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
-                          ),
-                          const SizedBox(
-                            height: 200,
-                            child: Center(
-                              child: Text(
-                                'KOSONG',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Riwayat Pencarian',
+                                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
                               ),
-                            ),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  await removeData('pref_riwayatcari');
+                                  getRiwayatCari();
+                                },
+                                child: const Text('Bersihkan'),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            key: ObjectKey(riwayatPencarian),
+                            height: 200,
+                            child: riwayatPencarian != null
+                                ? ListView(
+                                    padding: const EdgeInsets.all(0),
+                                    shrinkWrap: true,
+                                    children: riwayatPencarian!,
+                                  )
+                                : const Center(
+                                    child: Text(
+                                      'KOSONG',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
                           )
                         ],
                       ),

@@ -22,7 +22,24 @@ class SlideInfoState extends BerandaState {
 }
 
 class SlideArtikelState extends BerandaState {
-  final List<Artikel> slides;
+  final List<Artikel> data;
 
-  const SlideArtikelState(this.slides);
+  const SlideArtikelState(this.data);
+}
+
+class ResultDetailArtikelState extends BerandaState {
+  final Artikel data;
+
+  const ResultDetailArtikelState(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+class ResultDetailPromoState extends BerandaState {
+  final Info data;
+
+  const ResultDetailPromoState(this.data);
+
+  @override
+  List<Object> get props => [data];
 }

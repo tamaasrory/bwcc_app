@@ -63,10 +63,37 @@ class ResultGetMetodePembayaranState extends ReservasiState {
   List<Object> get props => [data];
 }
 
+class ResultGetDaftarKeluargaState extends ReservasiState {
+  final List<SelectPasien> data;
+
+  const ResultGetDaftarKeluargaState(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
 class ResultGetDetailDokterState extends ReservasiState {
   final DetailDokter data;
 
   const ResultGetDetailDokterState(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
+class ResultRiwayatReservasiState extends ReservasiState {
+  final List<RiwayatReservasi> data;
+
+  const ResultRiwayatReservasiState(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
+class ResultDetailRiwayatState extends ReservasiState {
+  final RiwayatReservasi data;
+
+  const ResultDetailRiwayatState(this.data);
 
   @override
   List<Object> get props => [data];

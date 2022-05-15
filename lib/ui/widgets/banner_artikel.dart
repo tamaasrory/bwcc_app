@@ -14,7 +14,7 @@ class BannerArtikel extends StatelessWidget {
       builder: (context, state) {
         List<Artikel> items = [];
         if (state is SlideArtikelState) {
-          items = state.slides;
+          items = state.data;
         } else {
           items = [
             Artikel(
@@ -38,11 +38,16 @@ class BannerArtikel extends StatelessWidget {
           items: items.map((i) {
             return Builder(
               builder: (BuildContext context) {
+                var mQuery = MediaQuery.of(context).size;
+                var acratio = mQuery.aspectRatio;
+
                 String deskripsi = '';
                 String judul = '';
                 if (i.deskripsi != null) {
-                  if (i.deskripsi!.length > 140) {
-                    deskripsi = i.deskripsi!.substring(0, 140) + '...';
+                  if (i.deskripsi!.length > ((mQuery.width * acratio) - 50)) {
+                    deskripsi = i.deskripsi!.substring(0, ((mQuery.width * acratio) - 50).toInt()) + '...';
+                  } else {
+                    deskripsi = i.deskripsi!;
                   }
                 }
                 if (i.judul != null) {
@@ -71,7 +76,6 @@ class BannerArtikel extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
-                        flex: 3,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: Column(
@@ -105,44 +109,42 @@ class BannerArtikel extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Flexible(
-                        flex: 1,
-                        child: IntrinsicWidth(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: i.image != null
-                                    ? Image.network(
-                                        Urls.getIcon(i.image!),
-                                        fit: BoxFit.cover,
-                                        width: 80,
-                                        height: 80,
-                                      )
-                                    : Image.asset(
-                                        'assets/images/banner-1.jpg',
-                                        fit: BoxFit.cover,
-                                        width: 80,
-                                        height: 80,
-                                      ),
-                              ),
-                              Expanded(
-                                child: TextButton(
-                                  onPressed: () {},
-                                  style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    minimumSize: const Size(0, 0),
-                                  ),
-                                  child: Text(
-                                    'View More',
-                                    style: TextStyle(
-                                        color: Theme.of(context).colorScheme.secondary, fontSize: 12),
-                                  ),
+                      IntrinsicWidth(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: i.image != null
+                                  ? Image.network(
+                                      Urls.getIcon(i.image!),
+                                      fit: BoxFit.cover,
+                                      width: 190 * acratio,
+                                      height: 190 * acratio,
+                                    )
+                                  : Image.asset(
+                                      'assets/images/banner-1.jpg',
+                                      fit: BoxFit.cover,
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: TextButton(
+                                onPressed: () {},
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: const Size(0, 0),
                                 ),
-                              )
-                            ],
-                          ),
+                                child: Text(
+                                  'View More'.toUpperCase(),
+                                  style:
+                                      TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       ),
                     ],

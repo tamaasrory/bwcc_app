@@ -35,5 +35,21 @@ class BerandaBloc extends Bloc<BerandaEvent, BerandaState> {
         emit(SlideArtikelState(response.results!));
       }
     });
+
+    on<GetDetailArtikelEvent>((event, emit) async {
+      var response = await ArtikelService.index();
+      // logApp('on<SetSlideLayananEvent> => ' + jsonEncode(response));
+      if (response.condition) {
+        emit(SlideArtikelState(response.results!));
+      }
+    });
+
+    on<GetDetailInfoEvent>((event, emit) async {
+      var response = await ArtikelService.index();
+      // logApp('on<SetSlideLayananEvent> => ' + jsonEncode(response));
+      if (response.condition) {
+        emit(SlideArtikelState(response.results!));
+      }
+    });
   }
 }

@@ -101,8 +101,7 @@ class _RegisterFormState extends State<RegisterForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          textFieldWidget(
-            context,
+          TextFieldWidget(
             label: 'Email',
             hint: 'Masukkan alamat email Anda',
             validator: (value) {
@@ -121,8 +120,7 @@ class _RegisterFormState extends State<RegisterForm> {
             },
           ),
           const SizedBox(height: 20),
-          textFieldWidget(
-            context,
+          TextFieldWidget(
             label: 'Password',
             hint: 'Masukkan Password (6 karakter)',
             hideText: _showPassword,
@@ -149,8 +147,7 @@ class _RegisterFormState extends State<RegisterForm> {
             },
           ),
           const SizedBox(height: 20),
-          textFieldWidget(
-            context,
+          TextFieldWidget(
             label: 'Ulangi Password',
             hint: 'Masukkan ulang password diatas',
             hideText: _showPassword,
@@ -213,8 +210,7 @@ class _RegisterFormState extends State<RegisterForm> {
             },
           ),
           const SizedBox(height: 20),
-          textFieldWidget(
-            context,
+          TextFieldWidget(
             label: 'Nama Lengkap',
             hint: 'Masukkan nama lengkap Anda',
             validator: (value) {

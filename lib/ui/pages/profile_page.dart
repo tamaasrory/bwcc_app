@@ -6,7 +6,6 @@ import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 import 'auth_page.dart';
 
@@ -104,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 const Divider(thickness: 1.5),
                                 Text(
-                                  authState.data.createdAt.toString().substring(0, 10),
+                                  AppDateTime(authState.data.createdAt.toString()).format('d MMM yyyy'),
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.secondary,
                                     fontWeight: FontWeight.w500,

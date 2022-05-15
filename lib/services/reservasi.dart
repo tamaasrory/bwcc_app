@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:bwcc_app/models/detail_dokter.dart';
 import 'package:bwcc_app/models/dokter.dart';
 import 'package:bwcc_app/models/form_reservasi.dart';
-import 'package:bwcc_app/models/poli.dart';
+import 'package:bwcc_app/models/pasien.dart';
+import 'package:bwcc_app/models/riwayat_reservasi.dart';
+import 'package:bwcc_app/models/select.dart';
 
 import '../config/app.dart';
 import '../models/responses.dart';
@@ -276,6 +278,41 @@ class ReservasiService {
     }
   }
 
+  static Future<Responses<List<SelectPasien>>> getDaftarKeluarga() async {
+    try {
+      var response = await ApiService.get(
+        'reservasi/daftar-keluarga',
+      );
+
+      if (response.statusCode == 200) {
+        var jsonObject = jsonDecode(response.body);
+        // logApp("jsonObject['results'] ==> " + jsonEncode(jsonObject['results']));
+
+        return Responses<List<SelectPasien>>(
+          condition: jsonObject['condition'] as bool,
+          message: jsonObject['message'],
+          results: List<SelectPasien>.from(jsonObject['results'].map((value) {
+            // logApp('PoliService ==> ' + jsonEncode(value));
+            return SelectPasien.fromJson(value);
+          })),
+        );
+      } else {
+        return Responses<List<SelectPasien>>(
+          condition: false,
+          message: 'Tidak dapat memuat data, Sepertinya ada masalah',
+          results: List<SelectPasien>.from([]),
+        );
+      }
+    } catch (e) {
+      logApp('PoliService error message => ' + e.toString());
+      return Responses<List<SelectPasien>>(
+        condition: false,
+        message: 'Sepertinya ada masalah, Mohon periksa jaringan/koneksi anda',
+        results: List<SelectPasien>.from([]),
+      );
+    }
+  }
+
   static Future<Responses<List>> postReservasi(FormReservasi formReservasi) async {
     try {
       var response = await ApiService.post("reservasi/store", formReservasi.toJson());
@@ -304,6 +341,74 @@ class ReservasiService {
     } catch (e) {
       logApp('message ERROR => ' + e.toString());
       return Responses<List>(
+        condition: false,
+        message: getMessage(e),
+        results: null,
+      );
+    }
+  }
+
+  static Future<Responses<List<RiwayatReservasi>>> getRiwayat() async {
+    try {
+      var response = await ApiService.get('reservasi/riwayat');
+
+      if (response.statusCode == 200) {
+        var jsonObject = jsonDecode(response.body);
+        // logApp("jsonObject['results'] ==> " + jsonEncode(jsonObject['results']));
+
+        return Responses<List<RiwayatReservasi>>(
+          condition: jsonObject['condition'] as bool,
+          message: jsonObject['message'],
+          results: List<RiwayatReservasi>.from(jsonObject['results'].map((value) {
+            // logApp('RiwayatReservasiService ==> ' + jsonEncode(value));
+            return RiwayatReservasi.fromJson(value);
+          })),
+        );
+      } else {
+        return Responses<List<RiwayatReservasi>>(
+          condition: false,
+          message: 'Tidak dapat memuat data, Sepertinya ada masalah',
+          results: List<RiwayatReservasi>.from([]),
+        );
+      }
+    } catch (e) {
+      logApp('RiwayatReservasiService error message => ' + e.toString());
+      return Responses<List<RiwayatReservasi>>(
+        condition: false,
+        message: 'Sepertinya ada masalah, Mohon periksa jaringan/koneksi anda',
+        results: List<RiwayatReservasi>.from([]),
+      );
+    }
+  }
+
+  static Future<Responses<RiwayatReservasi>> getDetailRiwayat({required String noReservasi}) async {
+    try {
+      var response = await ApiService.get("reservasi/detail", query: {'no_reservasi': noReservasi});
+
+      if (response.statusCode == 200) {
+        var jsonObject = jsonDecode(response.body);
+        // ignore: prefer_typing_uninitialized_variables
+        var results;
+        if (jsonObject['results'] != null) {
+          results = (jsonObject as Map<String, dynamic>)['results'];
+          results = RiwayatReservasi.fromJson(results);
+        }
+
+        return Responses<RiwayatReservasi>(
+          condition: jsonObject['condition'] as bool,
+          message: jsonObject['message'],
+          results: results,
+        );
+      } else {
+        return Responses<RiwayatReservasi>(
+          condition: false,
+          message: 'Tidak dapat melakukan login',
+          results: null,
+        );
+      }
+    } catch (e) {
+      logApp('message ERROR => ' + e.toString());
+      return Responses<RiwayatReservasi>(
         condition: false,
         message: getMessage(e),
         results: null,

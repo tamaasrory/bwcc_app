@@ -73,11 +73,15 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
             child: SingleChildScrollView(
               child: BlocBuilder<ReservasiBloc, ReservasiState>(
                 builder: (context, state) {
+                  var poliId = 'null';
                   if (state is ResultGetDetailDokterState) {
                     List<Widget> groupPoli = [];
                     var headerGroup = [];
                     for (var gp in state.data.jadwal!) {
                       if (!headerGroup.contains(gp.poli)) {
+                        if (poliId == 'null') {
+                          poliId = gp.poliId.toString();
+                        }
                         groupPoli.add(Padding(
                           padding: const EdgeInsets.only(top: 20, bottom: 5),
                           child: Text(
@@ -203,7 +207,7 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
                                   MaterialPageRoute(
                                     builder: (_) => ReservasiPage(
                                       dokterId: widget.dokterId.toString(),
-                                      poliId: widget.poliId.toString(),
+                                      poliId: poliId.toString(),
                                     ),
                                   ),
                                 );

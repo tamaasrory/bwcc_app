@@ -1,25 +1,28 @@
+import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/config/date_time.dart';
+import 'package:bwcc_app/models/artikel.dart';
 import 'package:bwcc_app/models/riwayat_reservasi.dart';
+import 'package:bwcc_app/ui/pages/detail_artikel_page.dart';
 import 'package:bwcc_app/ui/pages/detail_reservasi_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class RiwayatPage extends StatefulWidget {
-  const RiwayatPage({Key? key}) : super(key: key);
+class ArtikelPage extends StatefulWidget {
+  const ArtikelPage({Key? key}) : super(key: key);
 
   @override
-  State<RiwayatPage> createState() => _RiwayatPageState();
+  State<ArtikelPage> createState() => _ArtikelPageState();
 }
 
-class _RiwayatPageState extends State<RiwayatPage> {
+class _ArtikelPageState extends State<ArtikelPage> {
   bool loadImgProfile = false;
 
   @override
   initState() {
-    BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
+    BlocProvider.of<BerandaBloc>(context).add(SetSlideArtikelEvent());
     super.initState();
   }
 
@@ -45,12 +48,12 @@ class _RiwayatPageState extends State<RiwayatPage> {
                     TextButton(
                       style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0)),
                       onPressed: () {
-                        // Navigator.pop(context, false);
+                        Navigator.pop(context, false);
                       },
                       child: Image.asset(AppAssets.backWhite, width: 32, height: 32),
                     ),
                     const Text(
-                      'RIWAYAT',
+                      'DAFTAR ARTIKEL',
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
@@ -72,10 +75,9 @@ class _RiwayatPageState extends State<RiwayatPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    BlocBuilder<ReservasiBloc, ReservasiState>(
+                    BlocBuilder<BerandaBloc, BerandaState>(
                       builder: (context, state) {
-                        List<RiwayatReservasi>? data =
-                            state is ResultRiwayatReservasiState ? state.data : null;
+                        List<Artikel>? data = state is SlideArtikelState ? state.data : null;
                         return data != null
                             ? ListView(
                                 padding: const EdgeInsets.all(10),
@@ -86,8 +88,8 @@ class _RiwayatPageState extends State<RiwayatPage> {
                                       await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => DetailReservasiPage(
-                                            noReservasi: v.noReservasi.toString(),
+                                          builder: (context) => DetailArtikelPage(
+                                            slug: v.slug.toString(),
                                           ),
                                         ),
                                       );
@@ -114,7 +116,7 @@ class _RiwayatPageState extends State<RiwayatPage> {
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     Text(
-                                                      v.noReservasi.toString(),
+                                                      v.slug.toString(),
                                                       style: TextStyle(
                                                         color: Theme.of(context).colorScheme.secondary,
                                                         fontWeight: FontWeight.w500,
