@@ -39,10 +39,9 @@ class ArtikelService {
     }
   }
 
-
-  static Future<Responses<RiwayatReservasi>> getDetailRiwayat({required String noReservasi}) async {
+  static Future<Responses<Artikel>> getDetail({required String slug}) async {
     try {
-      var response = await ApiService.get("reservasi/detail", query: {'no_reservasi': noReservasi});
+      var response = await ApiService.get("artikel/show", query: {'slug': slug});
 
       if (response.statusCode == 200) {
         var jsonObject = jsonDecode(response.body);
@@ -50,24 +49,24 @@ class ArtikelService {
         var results;
         if (jsonObject['results'] != null) {
           results = (jsonObject as Map<String, dynamic>)['results'];
-          results = RiwayatReservasi.fromJson(results);
+          results = Artikel.fromJson(results);
         }
 
-        return Responses<RiwayatReservasi>(
+        return Responses<Artikel>(
           condition: jsonObject['condition'] as bool,
           message: jsonObject['message'],
           results: results,
         );
       } else {
-        return Responses<RiwayatReservasi>(
+        return Responses<Artikel>(
           condition: false,
-          message: 'Tidak dapat melakukan login',
+          message: 'Artikel tidak ditemukan',
           results: null,
         );
       }
     } catch (e) {
       logApp('message ERROR => ' + e.toString());
-      return Responses<RiwayatReservasi>(
+      return Responses<Artikel>(
         condition: false,
         message: getMessage(e),
         results: null,

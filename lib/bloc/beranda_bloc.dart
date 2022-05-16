@@ -37,18 +37,18 @@ class BerandaBloc extends Bloc<BerandaEvent, BerandaState> {
     });
 
     on<GetDetailArtikelEvent>((event, emit) async {
-      var response = await ArtikelService.index();
+      var response = await ArtikelService.getDetail(slug: event.slug);
       // logApp('on<SetSlideLayananEvent> => ' + jsonEncode(response));
       if (response.condition) {
-        emit(SlideArtikelState(response.results!));
+        emit(ResultDetailArtikelState(response.results!));
       }
     });
 
     on<GetDetailInfoEvent>((event, emit) async {
-      var response = await ArtikelService.index();
+      var response = await InfoService.getDetail(id: event.id);
       // logApp('on<SetSlideLayananEvent> => ' + jsonEncode(response));
       if (response.condition) {
-        emit(SlideArtikelState(response.results!));
+        emit(ResultDetailInfoState(response.results!));
       }
     });
   }

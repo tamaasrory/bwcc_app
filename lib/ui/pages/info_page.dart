@@ -1,25 +1,28 @@
+import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/config/date_time.dart';
+import 'package:bwcc_app/models/info.dart';
 import 'package:bwcc_app/models/riwayat_reservasi.dart';
+import 'package:bwcc_app/ui/pages/detail_info_page.dart';
 import 'package:bwcc_app/ui/pages/detail_reservasi_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class PromoPage extends StatefulWidget {
-  const PromoPage({Key? key}) : super(key: key);
+class InfoPage extends StatefulWidget {
+  const InfoPage({Key? key}) : super(key: key);
 
   @override
-  State<PromoPage> createState() => _PromoPageState();
+  State<InfoPage> createState() => _InfoPageState();
 }
 
-class _PromoPageState extends State<PromoPage> {
+class _InfoPageState extends State<InfoPage> {
   bool loadImgProfile = false;
 
   @override
   initState() {
-    BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
+    BlocProvider.of<BerandaBloc>(context).add(SetSlideInfoEvent());
     super.initState();
   }
 
@@ -72,12 +75,14 @@ class _PromoPageState extends State<PromoPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    BlocBuilder<ReservasiBloc, ReservasiState>(
+                    BlocBuilder<BerandaBloc, BerandaState>(
                       builder: (context, state) {
-                        List<RiwayatReservasi>? data =
-                            state is ResultRiwayatReservasiState ? state.data : null;
+                        var mQuery = MediaQuery.of(context).size;
+                        var acratio = mQuery.aspectRatio;
+                        List<Info>? data = state is SlideInfoState ? state.data : null;
                         return data != null
                             ? ListView(
+                                physics: const NeverScrollableScrollPhysics(),
                                 padding: const EdgeInsets.all(10),
                                 shrinkWrap: true,
                                 children: data.map((v) {
@@ -86,74 +91,71 @@ class _PromoPageState extends State<PromoPage> {
                                       await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => DetailReservasiPage(
-                                            noReservasi: v.noReservasi.toString(),
+                                          builder: (context) => DetailInfoPage(
+                                            id: v.id.toString(),
                                           ),
                                         ),
                                       );
-                                      BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
+                                      BlocProvider.of<BerandaBloc>(context).add(SetSlideInfoEvent());
                                     },
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 5),
+                                      padding: const EdgeInsets.only(bottom: 20),
                                       child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            width: 1,
-                                            color: Colors.grey,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            border: Border.all(color: HexColor('#f5f5f5')),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey.withOpacity(0.3),
+                                                offset: const Offset(0, 5.0),
+                                                blurRadius: 3,
+                                                spreadRadius: 0,
+                                              )
+                                            ],
+                                            //Border(top: BorderSide(color: HexColor('#cccccc'))),
                                           ),
-                                          borderRadius: const BorderRadius.all(Radius.circular(7)),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 7),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.stretch,
                                             children: [
-                                              IntrinsicHeight(
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                  horizontal: 10,
+                                                ),
                                                 child: Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
-                                                    Text(
-                                                      v.noReservasi.toString(),
-                                                      style: TextStyle(
-                                                        color: Theme.of(context).colorScheme.secondary,
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
+                                                    const Icon(
+                                                      Icons.calendar_month,
+                                                      size: 16,
+                                                      color: Colors.green,
                                                     ),
+                                                    const SizedBox(width: 5),
                                                     Text(
-                                                      AppDateTime(v.createdAt.toString())
-                                                          .format('EEEE, dd MMM yyyy HH:mm')
-                                                          .toUpperCase(),
+                                                      AppDateTime(v.updatedAt).format('dd MMM yyyy'),
                                                       style: TextStyle(
-                                                        color: Theme.of(context).colorScheme.primary,
-                                                        fontWeight: FontWeight.w500,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: HexColor('#888888'),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                               ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                '${v.nama}; ${v.poli}; ${v.dokter}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                v.statuskonfirm.toString() != 'null'
-                                                    ? v.statuskonfirm.toString()
-                                                    : 'MENUNGGU KONFIRMASI PEMBAYARAN ANDA',
-                                                textAlign: TextAlign.right,
-                                                style: TextStyle(
-                                                  color: Colors.amber[800],
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                              ClipRRect(
+                                                borderRadius: BorderRadius.circular(8.0),
+                                                child: v.image != null
+                                                    ? Image.network(
+                                                        Urls.getIcon(v.image!),
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : Image.asset(
+                                                        'assets/images/banner-1.jpg',
+                                                        fit: BoxFit.cover,
+                                                        width: 200 * acratio,
+                                                      ),
                                               ),
                                             ],
-                                          ),
-                                        ),
-                                      ),
+                                          )),
                                     ),
                                   );
                                 }).toList(),

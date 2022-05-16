@@ -28,8 +28,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 
 class AppConfig {
-  static String baseUrl = "http://127.0.0.1/bwcc";
-  // static String baseUrl = "http://192.168.43.209/bwcc";
+  // static String baseUrl = "http://127.0.0.1/bwcc";
+  static String baseUrl = "http://192.168.43.209/bwcc";
   // static String baseUrl = "https://bwcc.tncdigital.id";
   static String baseApiPath = "/api/1.0/";
 

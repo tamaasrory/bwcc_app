@@ -25,6 +25,7 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _pages = [
     Navigator(
+      key: ObjectKey('beranda'),
       onGenerateRoute: (settings) {
         logApp('settings.name => ' + settings.name.toString());
 
@@ -39,8 +40,18 @@ class _MainPageState extends State<MainPage> {
     JadwalDokterPage(
       key: PageStorageKey('Jadwal'),
     ),
-    RiwayatPage(
-      key: PageStorageKey('Riwayat'),
+    Navigator(
+      key: ObjectKey('riwayat'),
+      onGenerateRoute: (settings) {
+        logApp('settings.name => ' + settings.name.toString());
+
+        // if (settings.name == 'page2') page = Page2();
+        return MaterialPageRoute(
+          builder: (_) => RiwayatPage(
+            key: PageStorageKey('Riwayat'),
+          ),
+        );
+      },
     ),
     ProfilePage(
       key: PageStorageKey('Profile'),

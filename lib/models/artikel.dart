@@ -1,3 +1,5 @@
+import 'package:bwcc_app/models/user.dart';
+
 class Artikel {
   Artikel({
     this.id,
@@ -7,6 +9,8 @@ class Artikel {
     this.deskripsi,
     this.author,
     this.editor,
+    this.createdAt,
+    this.updatedAt,
   });
 
   String? id;
@@ -14,8 +18,10 @@ class Artikel {
   String? slug;
   String? image;
   String? deskripsi;
-  String? author;
+  User? author;
   String? editor;
+  String? createdAt;
+  String? updatedAt;
 
   factory Artikel.fromJson(Map<String, dynamic> json) => Artikel(
         id: json["id"].toString(),
@@ -23,8 +29,10 @@ class Artikel {
         slug: json['slug'].toString(),
         image: json['image'].toString(),
         deskripsi: json['deskripsi'].toString(),
-        author: json['author'].toString(),
+        author: User.fromJson(json['author']),
         editor: json['editor'].toString(),
+        createdAt: json["created_at"].toString(),
+        updatedAt: json["updated_at"].toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -35,5 +43,7 @@ class Artikel {
         'deskripsi': deskripsi,
         'author': author,
         'editor': editor,
+        'created_at': createdAt,
+        'updated_at': updatedAt,
       };
 }

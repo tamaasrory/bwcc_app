@@ -313,7 +313,7 @@ class ReservasiService {
     }
   }
 
-  static Future<Responses<List>> postReservasi(FormReservasi formReservasi) async {
+  static Future<Responses<Map<String, dynamic>>> postReservasi(FormReservasi formReservasi) async {
     try {
       var response = await ApiService.post("reservasi/store", formReservasi.toJson());
 
@@ -323,16 +323,16 @@ class ReservasiService {
         var results;
         if (jsonObject['results'] != null) {
           results = (jsonObject as Map<String, dynamic>)['results'];
-          results = List.from(results);
+          // results = List.from(results);
         }
 
-        return Responses<List>(
+        return Responses<Map<String, dynamic>>(
           condition: jsonObject['condition'] as bool,
           message: jsonObject['message'],
           results: results,
         );
       } else {
-        return Responses<List>(
+        return Responses<Map<String, dynamic>>(
           condition: false,
           message: 'Tidak dapat mengirim reservasi, silahkan coba lagi',
           results: null,
@@ -340,7 +340,7 @@ class ReservasiService {
       }
     } catch (e) {
       logApp('message ERROR => ' + e.toString());
-      return Responses<List>(
+      return Responses<Map<String, dynamic>>(
         condition: false,
         message: getMessage(e),
         results: null,

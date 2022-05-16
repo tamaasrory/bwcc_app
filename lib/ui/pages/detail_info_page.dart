@@ -2,26 +2,26 @@ import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/config/date_time.dart';
 import 'package:bwcc_app/models/artikel.dart';
+import 'package:bwcc_app/models/info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-class DetailArtikelPage extends StatefulWidget {
-  final String slug;
-  const DetailArtikelPage({Key? key, required this.slug}) : super(key: key);
+class DetailInfoPage extends StatefulWidget {
+  final String id;
+  const DetailInfoPage({Key? key, required this.id}) : super(key: key);
 
   @override
-  State<DetailArtikelPage> createState() => _DetailArtikelPageState();
+  State<DetailInfoPage> createState() => _DetailInfoPageState();
 }
 
-class _DetailArtikelPageState extends State<DetailArtikelPage> {
+class _DetailInfoPageState extends State<DetailInfoPage> {
   bool loadImgProfile = false;
 
   @override
   initState() {
-    logApp('SLUG => ' + widget.slug.toString());
-    BlocProvider.of<BerandaBloc>(context).add(GetDetailArtikelEvent(widget.slug));
+    BlocProvider.of<BerandaBloc>(context).add(GetDetailInfoEvent(widget.id));
     super.initState();
   }
 
@@ -52,7 +52,7 @@ class _DetailArtikelPageState extends State<DetailArtikelPage> {
                       child: Image.asset(AppAssets.backWhite, width: 32, height: 32),
                     ),
                     const Text(
-                      'ARTIKEL',
+                      'DETAIL INFO',
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
@@ -74,7 +74,7 @@ class _DetailArtikelPageState extends State<DetailArtikelPage> {
                   builder: (context, state) {
                     var mQuery = MediaQuery.of(context).size;
                     var acratio = mQuery.aspectRatio;
-                    Artikel? data = state is ResultDetailArtikelState ? state.data : null;
+                    Info? data = state is ResultDetailInfoState ? state.data : null;
                     return data != null
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -94,20 +94,10 @@ class _DetailArtikelPageState extends State<DetailArtikelPage> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 15, bottom: 5, left: 15, right: 15),
-                                child: Text(
-                                  data.judul.toString(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
                                 child: Row(
                                   children: [
                                     Text(
-                                      data.author!.username.toString(),
+                                      data.createdBy!.username.toString(),
                                       style: const TextStyle(
                                         color: Colors.blueGrey,
                                         fontWeight: FontWeight.w500,
@@ -130,12 +120,6 @@ class _DetailArtikelPageState extends State<DetailArtikelPage> {
                                       ),
                                     ),
                                   ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 0, bottom: 10, left: 8, right: 8),
-                                child: Html(
-                                  data: data.deskripsi.toString(),
                                 ),
                               ),
                               const SizedBox(height: 30),

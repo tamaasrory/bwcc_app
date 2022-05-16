@@ -38,4 +38,39 @@ class InfoService {
       );
     }
   }
+
+  static Future<Responses<Info>> getDetail({required String id}) async {
+    try {
+      var response = await ApiService.get("slide-info/show", query: {'id': id});
+
+      if (response.statusCode == 200) {
+        var jsonObject = jsonDecode(response.body);
+        // ignore: prefer_typing_uninitialized_variables
+        var results;
+        if (jsonObject['results'] != null) {
+          results = (jsonObject as Map<String, dynamic>)['results'];
+          results = Info.fromJson(results);
+        }
+
+        return Responses<Info>(
+          condition: jsonObject['condition'] as bool,
+          message: jsonObject['message'],
+          results: results,
+        );
+      } else {
+        return Responses<Info>(
+          condition: false,
+          message: 'Info tidak ditemukan',
+          results: null,
+        );
+      }
+    } catch (e) {
+      logApp('message ERROR => ' + e.toString());
+      return Responses<Info>(
+        condition: false,
+        message: getMessage(e),
+        results: null,
+      );
+    }
+  }
 }

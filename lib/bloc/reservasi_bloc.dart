@@ -103,10 +103,12 @@ class ReservasiBloc extends Bloc<ReservasiEvent, ReservasiState> {
       emit(const ProgessState(true));
       var response = await ReservasiService.postReservasi(event.formReservasi);
       logApp('on<PostReservasiEvent> ' + jsonEncode(response));
-      emit(const ProgessState(false));
+
       if (response.condition) {
         logApp('berhasil => ');
-        // emit(ResultGetWaktuState(response.results!));
+        emit(ProgessState(false, extra: response.results!['no_reservasi']));
+      } else {
+        emit(const ProgessState(false));
       }
     });
 

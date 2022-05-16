@@ -183,6 +183,7 @@ class _CariDokterPageState extends State<CariDokterPage> {
                               datas = state.data;
                               if (datas != null) {
                                 return ListView(
+                                  physics: const NeverScrollableScrollPhysics(),
                                   padding: const EdgeInsets.all(10),
                                   shrinkWrap: true,
                                   children: datas!.map((v) {
@@ -412,19 +413,22 @@ class _CariDokterPageState extends State<CariDokterPage> {
                           ),
                           SizedBox(
                             key: ObjectKey(riwayatPencarian),
-                            height: 200,
                             child: riwayatPencarian != null
                                 ? ListView(
+                                    physics: const NeverScrollableScrollPhysics(),
                                     padding: const EdgeInsets.all(0),
                                     shrinkWrap: true,
                                     children: riwayatPencarian!,
                                   )
-                                : const Center(
-                                    child: Text(
-                                      'KOSONG',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w500,
+                                : const SizedBox(
+                                    height: 150,
+                                    child: Center(
+                                      child: Text(
+                                        'KOSONG',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
                                   ),

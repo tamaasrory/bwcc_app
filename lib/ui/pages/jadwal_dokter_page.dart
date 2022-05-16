@@ -142,6 +142,7 @@ class _JadwalDokterPageState extends State<JadwalDokterPage> {
                               datas = state.data;
                               if (datas != null) {
                                 return ListView(
+                                  physics: const NeverScrollableScrollPhysics(),
                                   padding: const EdgeInsets.all(10),
                                   shrinkWrap: true,
                                   children: datas!.map((v) {

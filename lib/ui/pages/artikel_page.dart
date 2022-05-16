@@ -1,11 +1,7 @@
 import 'package:bwcc_app/bloc/beranda_bloc.dart';
-import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
-import 'package:bwcc_app/config/date_time.dart';
 import 'package:bwcc_app/models/artikel.dart';
-import 'package:bwcc_app/models/riwayat_reservasi.dart';
 import 'package:bwcc_app/ui/pages/detail_artikel_page.dart';
-import 'package:bwcc_app/ui/pages/detail_reservasi_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,12 +73,34 @@ class _ArtikelPageState extends State<ArtikelPage> {
                   children: [
                     BlocBuilder<BerandaBloc, BerandaState>(
                       builder: (context, state) {
+                        var mQuery = MediaQuery.of(context).size;
+                        var acratio = mQuery.aspectRatio;
+
                         List<Artikel>? data = state is SlideArtikelState ? state.data : null;
                         return data != null
                             ? ListView(
+                                physics: const NeverScrollableScrollPhysics(),
                                 padding: const EdgeInsets.all(10),
                                 shrinkWrap: true,
                                 children: data.map((v) {
+                                  String deskripsi = '';
+                                  String judul = '';
+                                  if (v.deskripsi != null) {
+                                    if (v.deskripsi!.length > ((mQuery.width * acratio) - 120)) {
+                                      deskripsi = v.deskripsi!
+                                              .substring(0, ((mQuery.width * acratio) - 120).toInt()) +
+                                          '...';
+                                    } else {
+                                      deskripsi = v.deskripsi!;
+                                    }
+                                  }
+                                  if (v.judul != null) {
+                                    if (v.judul!.length > 45) {
+                                      judul = v.judul!.substring(0, 45) + '...';
+                                    } else {
+                                      judul = v.judul!;
+                                    }
+                                  }
                                   return GestureDetector(
                                     onTap: () async {
                                       await Navigator.push(
@@ -93,70 +111,74 @@ class _ArtikelPageState extends State<ArtikelPage> {
                                           ),
                                         ),
                                       );
-                                      BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
+                                      BlocProvider.of<BerandaBloc>(context).add(SetSlideArtikelEvent());
                                     },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 5),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            width: 1,
-                                            color: Colors.grey,
-                                          ),
-                                          borderRadius: const BorderRadius.all(Radius.circular(7)),
+                                    child: Container(
+                                        padding: const EdgeInsets.only(
+                                          top: 10,
+                                          bottom: 10,
+                                          right: 10,
+                                          left: 10,
                                         ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 7),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                                            children: [
-                                              IntrinsicHeight(
-                                                child: Row(
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            top: BorderSide(color: HexColor('#f5f5f5'), width: 1.5),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 150 * acratio,
+                                              height: 150 * acratio,
+                                              decoration: BoxDecoration(
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey.withOpacity(0.6),
+                                                    offset: const Offset(0.0, 2.0),
+                                                    blurRadius: 5,
+                                                    spreadRadius: 0,
+                                                  )
+                                                ],
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.circular(8.0),
+                                                child: v.image != null
+                                                    ? Image.network(
+                                                        Urls.getIcon(v.image!),
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : Image.asset(
+                                                        'assets/images/banner-1.jpg',
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                              ),
+                                            ),
+                                            Flexible(
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                  horizontal: 10,
+                                                ),
+                                                child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     Text(
-                                                      v.slug.toString(),
-                                                      style: TextStyle(
-                                                        color: Theme.of(context).colorScheme.secondary,
-                                                        fontWeight: FontWeight.w500,
+                                                      judul,
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: 16,
                                                       ),
                                                     ),
                                                     Text(
-                                                      AppDateTime(v.createdAt.toString())
-                                                          .format('EEEE, dd MMM yyyy HH:mm')
-                                                          .toUpperCase(),
-                                                      style: TextStyle(
-                                                        color: Theme.of(context).colorScheme.primary,
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
+                                                      deskripsi,
+                                                      style: TextStyle(color: HexColor('#888888')),
                                                     ),
                                                   ],
                                                 ),
                                               ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                '${v.nama}; ${v.poli}; ${v.dokter}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                v.statuskonfirm.toString() != 'null'
-                                                    ? v.statuskonfirm.toString()
-                                                    : 'MENUNGGU KONFIRMASI PEMBAYARAN ANDA',
-                                                textAlign: TextAlign.right,
-                                                style: TextStyle(
-                                                  color: Colors.amber[800],
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                            )
+                                          ],
+                                        )),
                                   );
                                 }).toList(),
                               )

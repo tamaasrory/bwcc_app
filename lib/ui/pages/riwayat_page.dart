@@ -78,6 +78,7 @@ class _RiwayatPageState extends State<RiwayatPage> {
                             state is ResultRiwayatReservasiState ? state.data : null;
                         return data != null
                             ? ListView(
+                                physics: const NeverScrollableScrollPhysics(),
                                 padding: const EdgeInsets.all(10),
                                 shrinkWrap: true,
                                 children: data.map((v) {
@@ -88,6 +89,7 @@ class _RiwayatPageState extends State<RiwayatPage> {
                                         MaterialPageRoute(
                                           builder: (context) => DetailReservasiPage(
                                             noReservasi: v.noReservasi.toString(),
+                                            isFromReservasi: false,
                                           ),
                                         ),
                                       );

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bwcc_app/bloc/bottom_navbar_bloc.dart';
 import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
@@ -6,10 +8,14 @@ import 'package:bwcc_app/models/riwayat_reservasi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class DetailReservasiPage extends StatefulWidget {
   final String noReservasi;
-  const DetailReservasiPage({Key? key, required this.noReservasi}) : super(key: key);
+  final bool isFromReservasi;
+  const DetailReservasiPage({Key? key, required this.noReservasi, required this.isFromReservasi})
+      : super(key: key);
 
   @override
   State<DetailReservasiPage> createState() => _DetailReservasiPageState();
@@ -17,6 +23,18 @@ class DetailReservasiPage extends StatefulWidget {
 
 class _DetailReservasiPageState extends State<DetailReservasiPage> {
   bool loadImgProfile = false;
+  final ImagePicker _picker = ImagePicker();
+  File? _image;
+
+  // Implementing the image picker
+  Future<void> _openImagePicker() async {
+    final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
+    }
+  }
 
   @override
   initState() {
@@ -46,7 +64,11 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                     TextButton(
                       style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0)),
                       onPressed: () {
-                        Navigator.pop(context, false);
+                        if (widget.isFromReservasi) {
+                          BlocProvider.of<BottomNavbarBloc>(context).add(const BottomNavbarEvent(2));
+                        } else {
+                          Navigator.pop(context, false);
+                        }
                       },
                       child: Image.asset(AppAssets.backWhite, width: 32, height: 32),
                     ),
@@ -117,16 +139,24 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                         ),
                                       ),
                                     ),
+                                    const SizedBox(width: 5),
                                     TextButton(
                                       onPressed: (() {
                                         Clipboard.setData(
                                           ClipboardData(text: data.noReservasi.toString()),
                                         ).then((value) {
-                                          showToast(context, 'Nomor reservasi telah tercopy',
-                                              position: MediaQuery.of(context).size.height - 100);
+                                          showToast(
+                                            context,
+                                            'Nomor reservasi telah tercopy',
+                                            position: 50,
+                                          );
                                         });
                                       }),
-                                      child: Row(
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: const Size(0, 0),
+                                      ),
+                                      child: Wrap(
                                         children: const [
                                           Icon(
                                             Icons.copy,
@@ -168,7 +198,8 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                'Admin Pendaftaran : ${data.feePendaftaran}\n',
+                                'Admin Pendaftaran : ' +
+                                    NumberFormat.currency(locale: 'id').format(data.feePendaftaran),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -191,9 +222,68 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                     primary: Theme.of(context).colorScheme.secondary,
                                     textStyle: const TextStyle(fontSize: 18),
                                   ),
-                                  onPressed: () {
-                                    BlocProvider.of<BottomNavbarBloc>(context)
-                                        .add(const BottomNavbarEvent(2));
+                                  onPressed: () async {
+                                    // final ImagePicker _picker = ImagePicker();
+                                    // // Pick an image
+                                    // final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                                    // // Capture a photo
+                                    // final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) {
+                                        // Using Wrap makes the bottom sheet height the height of the content.
+                                        // Otherwise, the height will be half the height of the screen.
+                                        return Wrap(
+                                          children: [
+                                            Container(
+                                              color: HexColor('#f5f5f5'),
+                                              width: MediaQuery.of(context).size.width,
+                                              padding: const EdgeInsets.symmetric(
+                                                vertical: 15,
+                                                horizontal: 20,
+                                              ),
+                                              child: const Text(
+                                                'Kirim Foto bukti transfer anda',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                // Pick an image
+                                                final XFile? image =
+                                                    await _picker.pickImage(source: ImageSource.gallery);
+                                              },
+                                              style: TextButton.styleFrom(
+                                                padding: EdgeInsets.zero,
+                                                minimumSize: const Size(0, 0),
+                                              ),
+                                              child: const ListTile(
+                                                leading: Icon(Icons.image),
+                                                title: Text('Ambil dari Gallery'),
+                                              ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                // Capture a photo
+                                                final XFile? photo =
+                                                    await _picker.pickImage(source: ImageSource.camera);
+                                              },
+                                              style: TextButton.styleFrom(
+                                                padding: EdgeInsets.zero,
+                                                minimumSize: const Size(0, 0),
+                                              ),
+                                              child: const ListTile(
+                                                leading: Icon(Icons.camera_alt),
+                                                title: Text('Foto dari Kamera'),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 70),
+                                          ],
+                                        );
+                                      },
+                                    );
                                   },
                                   child: const Text(
                                     'Konfirmasi Pembayaran',
@@ -204,6 +294,22 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                 ),
                               ),
                               const SizedBox(height: 30),
+                              Center(
+                                child: ElevatedButton(
+                                  child: const Text('Select An Image'),
+                                  onPressed: _openImagePicker,
+                                ),
+                              ),
+                              const SizedBox(height: 35),
+                              Container(
+                                alignment: Alignment.center,
+                                width: double.infinity,
+                                height: 300,
+                                color: Colors.grey[300],
+                                child: _image != null
+                                    ? Image.file(_image!, fit: BoxFit.cover)
+                                    : const Text('Please select an image'),
+                              ),
                             ],
                           )
                         : const Center(

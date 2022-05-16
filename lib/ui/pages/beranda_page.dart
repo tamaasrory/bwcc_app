@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:bwcc_app/bloc/auth_bloc.dart';
 import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
+import 'package:bwcc_app/models/artikel.dart';
+import 'package:bwcc_app/models/info.dart';
 import 'package:bwcc_app/models/layanan_kami.dart';
 import 'package:bwcc_app/models/user.dart';
 import 'package:bwcc_app/ui/pages/artikel_page.dart';
-import 'package:bwcc_app/ui/pages/promo_page.dart';
+import 'package:bwcc_app/ui/pages/info_page.dart';
 import 'package:bwcc_app/ui/pages/reservasi_page.dart';
 import 'package:bwcc_app/ui/widgets/banner_artikel.dart';
 import 'package:bwcc_app/ui/widgets/banner_infopromo.dart';
@@ -27,6 +29,8 @@ class BerandaPage extends StatefulWidget {
 
 class _BerandaPageState extends State<BerandaPage> {
   bool loadImgProfile = false;
+  List<Artikel> articles = [Artikel()];
+  List<Info> infos = [Info()];
   List<LayananKami> _gridMenus = [];
 
   // List<Map<String, dynamic>> _topMenus = ;
@@ -159,7 +163,7 @@ class _BerandaPageState extends State<BerandaPage> {
                   'icon': Icons.discount,
                   'label': 'Promo',
                   'onPressed': () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PromoPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const InfoPage()));
                   },
                 },
                 {
@@ -235,8 +239,8 @@ class _BerandaPageState extends State<BerandaPage> {
                       BlocListener<BerandaBloc, BerandaState>(
                         listener: (context, state) {
                           if (state is SlideLayananState) {
-                            logApp('SLIDES => ' + jsonEncode(state.slides));
-                            _gridMenus = state.slides;
+                            logApp('SLIDES => ' + jsonEncode(state.data));
+                            _gridMenus = state.data;
                             setState(() {});
                           }
                         },
@@ -285,7 +289,7 @@ class _BerandaPageState extends State<BerandaPage> {
                                     height: 80,
                                     errorBuilder: (a, b, c) {
                                       return Image.asset(
-                                        'assets/images/logo_white_background.png',
+                                        'assets/images/icon_anak.png',
                                         width: 80,
                                         height: 80,
                                       );
@@ -317,7 +321,14 @@ class _BerandaPageState extends State<BerandaPage> {
                                           SizedBox(
                                             height: 180,
                                             width: 180,
-                                            child: Image.network(Urls.getIcon(e.featureImage)),
+                                            child: Image.network(
+                                              Urls.getIcon(e.icon),
+                                              errorBuilder: (a, b, c) {
+                                                return Image.asset(
+                                                  'assets/images/icon_anak.png',
+                                                );
+                                              },
+                                            ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(20),
@@ -355,7 +366,15 @@ class _BerandaPageState extends State<BerandaPage> {
                     ),
                   ),
                 ),
-                const BannerInfoPromo(),
+                BlocListener<BerandaBloc, BerandaState>(
+                  listener: (context, state) {
+                    if (state is SlideInfoState) {
+                      infos = state.data;
+                      setState(() {});
+                    }
+                  },
+                  child: BannerInfoPromo(items: infos),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                   child: RichText(
@@ -375,7 +394,17 @@ class _BerandaPageState extends State<BerandaPage> {
                     ),
                   ),
                 ),
-                const BannerArtikel(),
+                BlocListener<BerandaBloc, BerandaState>(
+                  listener: (context, state) {
+                    if (state is SlideArtikelState) {
+                      articles = state.data;
+                      setState(() {});
+                    }
+                  },
+                  child: BannerArtikel(
+                    items: articles,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                   child: RichText(

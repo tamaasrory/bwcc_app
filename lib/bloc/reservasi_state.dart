@@ -101,8 +101,9 @@ class ResultDetailRiwayatState extends ReservasiState {
 
 class ProgessState extends ReservasiState {
   final bool loading;
+  final String? extra;
 
-  const ProgessState(this.loading);
+  const ProgessState(this.loading, {this.extra});
 
   @override
   List<Object> get props => [loading];

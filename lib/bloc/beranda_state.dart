@@ -10,15 +10,15 @@ abstract class BerandaState extends Equatable {
 class HomeInitial extends BerandaState {}
 
 class SlideLayananState extends BerandaState {
-  final List<LayananKami> slides;
+  final List<LayananKami> data;
 
-  const SlideLayananState(this.slides);
+  const SlideLayananState(this.data);
 }
 
 class SlideInfoState extends BerandaState {
-  final List<Info> slides;
+  final List<Info> data;
 
-  const SlideInfoState(this.slides);
+  const SlideInfoState(this.data);
 }
 
 class SlideArtikelState extends BerandaState {
@@ -35,10 +35,11 @@ class ResultDetailArtikelState extends BerandaState {
   @override
   List<Object> get props => [data];
 }
-class ResultDetailPromoState extends BerandaState {
+
+class ResultDetailInfoState extends BerandaState {
   final Info data;
 
-  const ResultDetailPromoState(this.data);
+  const ResultDetailInfoState(this.data);
 
   @override
   List<Object> get props => [data];

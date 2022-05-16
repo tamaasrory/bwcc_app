@@ -12,6 +12,7 @@ import 'package:bwcc_app/models/user.dart';
 import 'package:bwcc_app/ui/pages/detail_reservasi_page.dart';
 import 'package:bwcc_app/ui/widgets/color_full_label.dart';
 import 'package:bwcc_app/ui/widgets/datetimepicker.dart';
+import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:bwcc_app/ui/widgets/dropdown.dart';
 import 'package:bwcc_app/ui/widgets/text_field.dart';
 import 'package:date_time_picker/date_time_picker.dart';
@@ -75,9 +76,14 @@ class _ReservasiPageState extends State<ReservasiPage> {
     super.initState();
   }
 
-  getValue(List<dynamic> data, val) {
+  getValue(List<dynamic> data, val, {bool? asBool}) {
     int index = data.indexWhere((element) => element.value == val);
-    return data[index];
+    logApp('message ==> ' + val);
+    if (asBool == null || asBool == false) {
+      return index >= 0 ? data[index] : null;
+    } else {
+      return index >= 0 ? true : false;
+    }
   }
 
   _isValid() {
@@ -145,7 +151,10 @@ class _ReservasiPageState extends State<ReservasiPage> {
                               Select(text: 'PILIH POLI', value: 'null'),
                             ];
                             _pilihanPoli.addAll(state.data);
-                            formReservasi.poliId = widget.poliId.toString();
+                            formReservasi.poliId =
+                                getValue(state.data, widget.poliId.toString(), asBool: true)
+                                    ? widget.poliId.toString()
+                                    : 'null';
                             setState(() {});
                             if (formReservasi.poliId != 'null') {
                               BlocProvider.of<ReservasiBloc>(context).add(
@@ -169,7 +178,9 @@ class _ReservasiPageState extends State<ReservasiPage> {
                               poliId: newValue.toString(),
                             ),
                           );
+                          formReservasi.dokterId = 'null';
                           formReservasi.poliId = newValue.toString();
+                          initialSelectHari = null;
                           setState(() {});
                         },
                       ),
@@ -183,7 +194,10 @@ class _ReservasiPageState extends State<ReservasiPage> {
                               Select(text: 'PILIH DOKTER', value: 'null'),
                             ];
                             _pilihanDokter.addAll(state.data);
-                            formReservasi.dokterId = widget.dokterId.toString();
+                            formReservasi.dokterId =
+                                getValue(state.data, widget.dokterId.toString(), asBool: true)
+                                    ? widget.dokterId.toString()
+                                    : 'null';
                             setState(() {});
                             if (formReservasi.dokterId != 'null') {
                               BlocProvider.of<ReservasiBloc>(context).add(
@@ -218,14 +232,15 @@ class _ReservasiPageState extends State<ReservasiPage> {
                           if (state.data.isNotEmpty) {
                             _tglAvailable = [];
                             _tglAvailable.addAll(state.data);
-                            if (_tglAvailable.isNotEmpty) {
-                              initialSelectHari = DateTime.parse(_tglAvailable[0]);
-                            }
+                            // if (_tglAvailable.isNotEmpty) {
+                            initialSelectHari = DateTime.parse(_tglAvailable[0]);
+                            // }
                             setState(() {});
                           }
                         }
                       },
                       child: DateTimePicker(
+                        key: ObjectKey(initialSelectHari),
                         type: DateTimePickerType.date,
                         locale: const Locale('id'),
                         dateMask: 'dd/MMM/yyyy',
@@ -296,14 +311,6 @@ class _ReservasiPageState extends State<ReservasiPage> {
                       },
                     ),
                     const SizedBox(height: 10),
-                    // TextFieldWidget(
-                    //   customelabel: richLable(context, 'Nama Lengkap ', 'Pasien'),
-                    //   hint: 'Masukkan nama lengkap pasien',
-                    //   onChanged: (newValue) {
-                    //     formReservasi.nama = newValue.toString();
-                    //     setState(() {});
-                    //   },
-                    // ),
                     BlocListener<ReservasiBloc, ReservasiState>(
                       listener: (context, state) {
                         if (state is ResultGetDaftarKeluargaState) {
@@ -379,7 +386,24 @@ class _ReservasiPageState extends State<ReservasiPage> {
                             if (!state.loading) {
                               Future.delayed(const Duration(milliseconds: 1250), () {
                                 setState(() {});
-                                BlocProvider.of<BottomNavbarBloc>(context).add(const BottomNavbarEvent(2));
+                                if (state.extra != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailReservasiPage(
+                                        noReservasi: state.extra.toString(),
+                                        isFromReservasi: true,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  dialogInfo(
+                                    context,
+                                    title: 'Gagal Melakukan Reservasi',
+                                    messages:
+                                        'Serpertinya ada masalah, silahkan coba ulang beberapa saat lagi',
+                                  );
+                                }
                               });
                             } else {
                               setState(() {});
@@ -396,16 +420,18 @@ class _ReservasiPageState extends State<ReservasiPage> {
                             textStyle: const TextStyle(fontSize: 18),
                           ),
                           onPressed: _isValid()
-                              ? () {
-                                  logApp('HASIL FORM DATA => ' + jsonEncode(formReservasi.toJson()));
-                                  formReservasi.phone = authState.data.noHandphone;
-                                  formReservasi.email = authState.data.email;
-                                  formReservasi.jamWaktu =
-                                      getValue(_pilihanWaktu, formReservasi.kuotaId.toString()).text;
-                                  setState(() {});
-                                  BlocProvider.of<ReservasiBloc>(context)
-                                      .add(PostReservasiEvent(formReservasi));
-                                }
+                              ? (loading
+                                  ? () {}
+                                  : () {
+                                      logApp('HASIL FORM DATA => ' + jsonEncode(formReservasi.toJson()));
+                                      formReservasi.phone = authState.data.noHandphone;
+                                      formReservasi.email = authState.data.email;
+                                      formReservasi.jamWaktu =
+                                          getValue(_pilihanWaktu, formReservasi.kuotaId.toString()).text;
+                                      setState(() {});
+                                      BlocProvider.of<ReservasiBloc>(context)
+                                          .add(PostReservasiEvent(formReservasi));
+                                    })
                               : null,
                           child: loading
                               ? Row(
