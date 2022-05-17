@@ -96,17 +96,20 @@ class ApiService {
   }
 
   static Future<http.Response> postMultipart(
-    Uri url, {
+    String path, {
     Map<String, String>? fields,
-    List<http.MultipartFile>? files,
+    List<Map<String, String>>? files,
   }) async {
     try {
-      var request = http.MultipartRequest('POST', url);
+      var request = http.MultipartRequest('POST', Urls.api(path));
       if (fields != null) {
         request.fields.addAll(fields);
       }
       if (files != null) {
-        request.files.addAll(files);
+        files.map((e) async {
+          var file = await http.MultipartFile.fromPath(e['name'].toString(), e['path'].toString());
+          request.files.add(file);
+        });
       }
       var streamedResponse = await request.send().timeout(
             Duration(seconds: AppConfig.timeout),

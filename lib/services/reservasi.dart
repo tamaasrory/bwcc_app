@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bwcc_app/models/detail_dokter.dart';
 import 'package:bwcc_app/models/dokter.dart';
 import 'package:bwcc_app/models/form_reservasi.dart';
+import 'package:bwcc_app/models/konfirmasi_pembayaran.dart';
 import 'package:bwcc_app/models/pasien.dart';
 import 'package:bwcc_app/models/riwayat_reservasi.dart';
 import 'package:bwcc_app/models/select.dart';
@@ -409,6 +410,47 @@ class ReservasiService {
     } catch (e) {
       logApp('message ERROR => ' + e.toString());
       return Responses<RiwayatReservasi>(
+        condition: false,
+        message: getMessage(e),
+        results: null,
+      );
+    }
+  }
+
+  static Future<Responses<Map<String, dynamic>>> postKonfirmasi(String noReservasi, String file) async {
+    try {
+      var response = await ApiService.postMultipart(
+        'reservasi/konfirmasi',
+        fields: {'no_reservasi': noReservasi},
+        files: [
+          {'name': 'image', 'path': file}
+        ],
+      );
+
+      if (response.statusCode == 200) {
+        var jsonObject = jsonDecode(response.body);
+        // ignore: prefer_typing_uninitialized_variables
+        var results;
+        if (jsonObject['results'] != null) {
+          results = (jsonObject as Map<String, dynamic>)['results'];
+          // results = List.from(results);
+        }
+
+        return Responses<Map<String, dynamic>>(
+          condition: jsonObject['condition'] as bool,
+          message: jsonObject['message'],
+          results: results,
+        );
+      } else {
+        return Responses<Map<String, dynamic>>(
+          condition: false,
+          message: 'Tidak dapat melakukan konfirmasi, silahkan coba lagi',
+          results: null,
+        );
+      }
+    } catch (e) {
+      logApp('message ERROR => ' + e.toString());
+      return Responses<Map<String, dynamic>>(
         condition: false,
         message: getMessage(e),
         results: null,

@@ -5,6 +5,7 @@ import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/config/date_time.dart';
 import 'package:bwcc_app/models/riwayat_reservasi.dart';
+import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -199,11 +200,16 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                               const SizedBox(height: 5),
                               Text(
                                 'Admin Pendaftaran : ' +
-                                    NumberFormat.currency(locale: 'id').format(data.feePendaftaran),
+                                    NumberFormat.currency(
+                                      locale: 'id',
+                                      symbol: 'Rp ',
+                                      decimalDigits: 0,
+                                    ).format(int.parse(data.feePendaftaran!)),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
+                              const SizedBox(height: 10),
                               Text(
                                 '''${data.additional}''',
                                 style: const TextStyle(
@@ -254,6 +260,26 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                                 // Pick an image
                                                 final XFile? image =
                                                     await _picker.pickImage(source: ImageSource.gallery);
+                                                if (image != null) {
+                                                  dialogContent(
+                                                    context,
+                                                    title: 'Konfirmasi Pembayaran',
+                                                    backgroundColor: Theme.of(context).colorScheme.primary,
+                                                    contents: Container(
+                                                      width: MediaQuery.of(context).size.width,
+                                                      child: Column(
+                                                        children: [
+                                                          Image.file(File(image.path)),
+                                                          const SizedBox(height: 25),
+                                                          OutlinedButton(
+                                                            onPressed: () {},
+                                                            child: const Text('KIRIM'),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
                                               },
                                               style: TextButton.styleFrom(
                                                 padding: EdgeInsets.zero,
