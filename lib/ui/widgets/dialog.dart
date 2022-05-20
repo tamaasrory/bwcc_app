@@ -5,6 +5,7 @@ dialogContent(
   String title = 'Pesan',
   String messages = 'Ahlan wa sahlan...',
   bool dismissable = true,
+  bool fullscreen = false,
   // bool withProgress = false,
   required Widget contents,
   List<Widget>? actions,
@@ -31,17 +32,37 @@ dialogContent(
     contentPadding: contentPadding ?? const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
   );
 
-  // show the dialog
-  showDialog(
-    context: context,
-    barrierDismissible: dismissable,
-    builder: (context) {
-      return WillPopScope(
-        onWillPop: () async => dismissable,
-        child: alert,
-      );
-    },
-  );
+  if (fullscreen) {
+    showGeneralDialog(
+        context: context,
+        barrierDismissible: false,
+        transitionDuration: const Duration(milliseconds: 500),
+        transitionBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: FadeTransition(
+              opacity: animation,
+              child: child,
+            ),
+          );
+        },
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return Scaffold(
+            body: contents,
+          );
+        });
+  } else {
+    showDialog(
+      context: context,
+      barrierDismissible: dismissable,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => dismissable,
+          child: alert,
+        );
+      },
+    );
+  }
 }
 
 dialogInfo(
@@ -165,4 +186,25 @@ dialogButtonOptions(
       );
     },
   );
+}
+
+dialogFullScreen(BuildContext context, {required Widget child}) {
+  showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      transitionDuration: const Duration(milliseconds: 500),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
+      },
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Scaffold(
+          body: SafeArea(child: child),
+        );
+      });
 }

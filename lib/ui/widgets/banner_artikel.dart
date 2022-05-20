@@ -1,7 +1,6 @@
 import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/models/artikel.dart';
-import 'package:bwcc_app/ui/pages/detail_artikel_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
@@ -31,12 +30,17 @@ class _BannerArtikelState extends State<BannerArtikel> {
             String deskripsi = '';
             String judul = '';
             if (i.deskripsi != null) {
-              if (i.deskripsi!.length > ((mQuery.width * acratio) - 100)) {
-                deskripsi = i.deskripsi!.substring(0, ((mQuery.width * acratio) - 100).toInt()) + '...';
+              double strLength = (mQuery.width > 400 ? 100 : 150);
+              var devWidth = mQuery.width * acratio;
+              strLength = strLength > devWidth ? 1 : (devWidth - strLength);
+
+              if (i.deskripsi!.length > strLength) {
+                deskripsi = i.deskripsi!.substring(0, (strLength).toInt()) + '...';
               } else {
                 deskripsi = i.deskripsi!;
               }
             }
+
             if (i.judul != null) {
               if (i.judul!.length > 50) {
                 judul = i.judul!.substring(0, 50) + '...';
@@ -44,6 +48,7 @@ class _BannerArtikelState extends State<BannerArtikel> {
                 judul = i.judul!;
               }
             }
+
             return Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.symmetric(horizontal: 23.0),

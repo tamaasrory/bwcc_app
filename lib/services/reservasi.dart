@@ -279,7 +279,7 @@ class ReservasiService {
     }
   }
 
-  static Future<Responses<List<SelectPasien>>> getDaftarKeluarga() async {
+  static Future<Responses<List<Pasien>>> getDaftarKeluarga() async {
     try {
       var response = await ApiService.get(
         'reservasi/daftar-keluarga',
@@ -289,27 +289,27 @@ class ReservasiService {
         var jsonObject = jsonDecode(response.body);
         // logApp("jsonObject['results'] ==> " + jsonEncode(jsonObject['results']));
 
-        return Responses<List<SelectPasien>>(
+        return Responses<List<Pasien>>(
           condition: jsonObject['condition'] as bool,
           message: jsonObject['message'],
-          results: List<SelectPasien>.from(jsonObject['results'].map((value) {
+          results: List<Pasien>.from(jsonObject['results'].map((value) {
             // logApp('PoliService ==> ' + jsonEncode(value));
-            return SelectPasien.fromJson(value);
+            return Pasien.fromJson(value);
           })),
         );
       } else {
-        return Responses<List<SelectPasien>>(
+        return Responses<List<Pasien>>(
           condition: false,
           message: 'Tidak dapat memuat data, Sepertinya ada masalah',
-          results: List<SelectPasien>.from([]),
+          results: List<Pasien>.from([]),
         );
       }
     } catch (e) {
       logApp('PoliService error message => ' + e.toString());
-      return Responses<List<SelectPasien>>(
+      return Responses<List<Pasien>>(
         condition: false,
         message: 'Sepertinya ada masalah, Mohon periksa jaringan/koneksi anda',
-        results: List<SelectPasien>.from([]),
+        results: List<Pasien>.from([]),
       );
     }
   }

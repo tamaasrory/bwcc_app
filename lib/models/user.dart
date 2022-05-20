@@ -7,6 +7,7 @@ class User {
     this.email,
     this.emailVerifiedAt,
     this.isActive,
+    this.avatar,
     this.createdAt,
     this.updatedAt,
     this.accessToken,
@@ -20,6 +21,7 @@ class User {
   String? email;
   String? emailVerifiedAt;
   String? isActive;
+  String? avatar;
   String? createdAt;
   String? updatedAt;
   String? accessToken;
@@ -33,6 +35,7 @@ class User {
         email: json["email"].toString(),
         emailVerifiedAt: json["email_verified_at"].toString(),
         isActive: json["is_active"].toString(),
+        avatar: json["avatar"].toString(),
         createdAt: json["created_at"].toString(),
         updatedAt: json["updated_at"].toString(),
         accessToken: json["access_token"].toString(),
@@ -46,6 +49,7 @@ class User {
         "no_handphone": noHandphone,
         "email": email,
         "email_verified_at": emailVerifiedAt,
+        "avatar": avatar,
         "is_active": isActive,
         "created_at": createdAt,
         "updated_at": updatedAt,

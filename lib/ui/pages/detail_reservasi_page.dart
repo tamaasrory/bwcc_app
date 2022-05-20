@@ -5,7 +5,7 @@ import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/config/date_time.dart';
 import 'package:bwcc_app/models/riwayat_reservasi.dart';
-import 'package:bwcc_app/ui/widgets/dialog.dart';
+import 'package:bwcc_app/ui/pages/konfirmasi_bayar_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +23,6 @@ class DetailReservasiPage extends StatefulWidget {
 }
 
 class _DetailReservasiPageState extends State<DetailReservasiPage> {
-  bool loadImgProfile = false;
   final ImagePicker _picker = ImagePicker();
   File? _image;
 
@@ -122,7 +121,7 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                 child: Row(
                                   children: [
                                     const Text(
-                                      'Nomor Reservasi : ',
+                                      'No. Reservasi : ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -229,11 +228,6 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                     textStyle: const TextStyle(fontSize: 18),
                                   ),
                                   onPressed: () async {
-                                    // final ImagePicker _picker = ImagePicker();
-                                    // // Pick an image
-                                    // final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-                                    // // Capture a photo
-                                    // final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
                                     showModalBottomSheet(
                                       context: context,
                                       builder: (context) {
@@ -258,27 +252,23 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                             TextButton(
                                               onPressed: () async {
                                                 // Pick an image
-                                                final XFile? image =
-                                                    await _picker.pickImage(source: ImageSource.gallery);
+                                                final XFile? image = await _picker.pickImage(
+                                                  source: ImageSource.gallery,
+                                                );
+
                                                 if (image != null) {
-                                                  dialogContent(
+                                                  await Navigator.push(
                                                     context,
-                                                    title: 'Konfirmasi Pembayaran',
-                                                    backgroundColor: Theme.of(context).colorScheme.primary,
-                                                    contents: Container(
-                                                      width: MediaQuery.of(context).size.width,
-                                                      child: Column(
-                                                        children: [
-                                                          Image.file(File(image.path)),
-                                                          const SizedBox(height: 25),
-                                                          OutlinedButton(
-                                                            onPressed: () {},
-                                                            child: const Text('KIRIM'),
-                                                          )
-                                                        ],
+                                                    MaterialPageRoute(
+                                                      builder: (context) => KonfirmasiBayarPage(
+                                                        noReservasi: data.noReservasi.toString(),
+                                                        imagePath: image.path,
                                                       ),
                                                     ),
                                                   );
+                                                  context.read<ReservasiBloc>().add(
+                                                      GetDetailRiwayatEvent(data.noReservasi.toString()));
+                                                  Navigator.pop(context, false);
                                                 }
                                               },
                                               style: TextButton.styleFrom(
@@ -295,6 +285,21 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                                 // Capture a photo
                                                 final XFile? photo =
                                                     await _picker.pickImage(source: ImageSource.camera);
+
+                                                if (photo != null) {
+                                                  await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => KonfirmasiBayarPage(
+                                                        noReservasi: data.noReservasi.toString(),
+                                                        imagePath: photo.path,
+                                                      ),
+                                                    ),
+                                                  );
+                                                  context.read<ReservasiBloc>().add(
+                                                      GetDetailRiwayatEvent(data.noReservasi.toString()));
+                                                  Navigator.pop(context, false);
+                                                }
                                               },
                                               style: TextButton.styleFrom(
                                                 padding: EdgeInsets.zero,
@@ -320,22 +325,6 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                 ),
                               ),
                               const SizedBox(height: 30),
-                              Center(
-                                child: ElevatedButton(
-                                  child: const Text('Select An Image'),
-                                  onPressed: _openImagePicker,
-                                ),
-                              ),
-                              const SizedBox(height: 35),
-                              Container(
-                                alignment: Alignment.center,
-                                width: double.infinity,
-                                height: 300,
-                                color: Colors.grey[300],
-                                child: _image != null
-                                    ? Image.file(_image!, fit: BoxFit.cover)
-                                    : const Text('Please select an image'),
-                              ),
                             ],
                           )
                         : const Center(

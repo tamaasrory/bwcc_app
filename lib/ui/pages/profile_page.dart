@@ -2,6 +2,7 @@ import 'package:bwcc_app/bloc/auth_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/config/date_time.dart';
 import 'package:bwcc_app/models/user.dart';
+import 'package:bwcc_app/ui/pages/daftar_keluarga_page.dart';
 import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,182 +29,182 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent, // status bar color
-      statusBarIconBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.dark,
     ));
 
     var _state = context.watch<AuthBloc>().state;
     AuthAttampState authState = (_state is AuthAttampState) ? _state : AuthAttampState(data: User());
-
+    logApp(authState.data.toJson().toString());
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(top: 8),
-            color: Theme.of(context).colorScheme.primary,
-            child: SafeArea(
-              child: IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    TextButton(
-                      style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0)),
-                      onPressed: () {
-                        // Navigator.pop(context, false);
-                      },
-                      child: Image.asset(AppAssets.backWhite, width: 32, height: 32),
-                    ),
-                    const Text(
-                      'PROFIL ANDA',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                    Image.asset(AppAssets.icLogo, width: 40, height: 40),
-                  ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            children: [
+              SafeArea(
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 4, color: HexColor('#eeeeee')),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100.0),
+                    child: authState.data.accessToken != null
+                        ? Image.network(
+                            Urls.getStorage(authState.data.avatar.toString()),
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            'assets/images/banner-1.jpg',
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          Image.asset(AppAssets.bgHeader, fit: BoxFit.cover),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.only(top: 25),
-                color: Theme.of(context).colorScheme.background,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Flexible(
-                            child: Icon(
-                              Icons.account_circle,
-                              size: 90,
-                              color: Colors.grey.shade400,
-                            ),
+              const SizedBox(height: 10),
+              Text(
+                authState.data.username.toString(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Container(
+                  padding: const EdgeInsets.only(top: 5, bottom: 5),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        offset: const Offset(0.0, 2.0),
+                        blurRadius: 5,
+                        spreadRadius: 0,
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: ListTile.divideTiles(
+                      context: context,
+                      tiles: [
+                        ListTile(
+                          title: Text(
+                            authState.data.noHandphone.toString(),
+                            style: TextStyle(color: HexColor('#757575')),
                           ),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  authState.data.username.toString(),
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                                const Divider(thickness: 1.5),
-                                Text(
-                                  AppDateTime(authState.data.createdAt.toString()).format('d MMM yyyy'),
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.secondary,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                Text(
-                                  authState.data.noHandphone.toString(),
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.secondary,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  authState.data.email.toString(),
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          leading: const Icon(Icons.phone),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          title: Text(
+                            authState.data.email.toString(),
+                            style: TextStyle(color: HexColor('#757575')),
                           ),
-                          Flexible(
-                            child: IconButton(
-                              onPressed: () => {},
-                              icon: Icon(
-                                Icons.edit,
-                                size: 32,
+                          leading: const Icon(Icons.mail),
+                          onTap: () {},
+                        ),
+                      ],
+                    ).toList(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Container(
+                  padding: const EdgeInsets.only(top: 5, bottom: 5),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        offset: const Offset(0.0, 2.0),
+                        blurRadius: 5,
+                        spreadRadius: 0,
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: ListTile.divideTiles(
+                      context: context,
+                      tiles: [
+                        ListTile(
+                          title: const Text('Profile'),
+                          leading: const Icon(Icons.manage_accounts_rounded),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          title: const Text('Daftar Keluarga'),
+                          leading: const Icon(Icons.bookmark),
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const DaftarKeluargaPage(),
+                              ),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          title: const Text('Ganti Password'),
+                          leading: const Icon(Icons.lock),
+                          onTap: () {},
+                        ),
+                        BlocListener<AuthBloc, AuthState>(
+                          listener: (context, state) {
+                            if (state is AuthAttampState) {
+                              if (!state.isLogged) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) => const AuthPage(),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          child: ListTile(
+                            title: Text(
+                              'Logout',
+                              style: TextStyle(
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(40.0),
-                      child: BlocListener<AuthBloc, AuthState>(
-                        listener: (context, state) {
-                          if (state is AuthAttampState) {
-                            if (!state.isLogged) {
-                              Navigator.pushReplacement(
+                            leading: Icon(
+                              Icons.logout_rounded,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            onTap: () {
+                              dialogConfirm(
                                 context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) => const AuthPage(),
-                                ),
+                                title: 'Logout',
+                                messages: 'Apakah Anda ingin logout sekarang juga ?',
+                                negativeText: 'TIDAK',
+                                positiveText: 'YA',
+                                positiveAction: () {
+                                  BlocProvider.of<AuthBloc>(context).add(SignOutEvent());
+                                },
+                                dismissable: true,
                               );
-                            }
-                          }
-                        },
-                        child: OutlinedButton(
-                          onPressed: () {
-                            dialogConfirm(
-                              context,
-                              title: 'Logout',
-                              messages: 'Apakah Anda ingin logout sekarang juga ?',
-                              negativeText: 'TIDAK',
-                              positiveText: 'YA',
-                              positiveAction: () {
-                                BlocProvider.of<AuthBloc>(context).add(SignOutEvent());
-                              },
-                              dismissable: true,
-                            );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 15,
-                              horizontal: 20,
-                            ),
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                            ),
-                            side: BorderSide(color: Theme.of(context).colorScheme.secondary),
-                            primary: Theme.of(context).colorScheme.secondary,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(Icons.logout_rounded),
-                              SizedBox(width: 10),
-                              Text(
-                                'Keluar',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ],
+                            },
                           ),
                         ),
-                      ),
-                    )
-                  ],
+                      ],
+                    ).toList(),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

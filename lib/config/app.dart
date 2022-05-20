@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
-import 'dart:ffi';
 import 'dart:math';
 
 import 'dart:io' as io;
@@ -28,8 +27,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 
 class AppConfig {
-  // static String baseUrl = "http://127.0.0.1/bwcc";
-  static String baseUrl = "http://192.168.43.209/bwcc";
+  static String baseUrl = "http://127.0.0.1/bwcc";
+  // static String baseUrl = "http://192.168.43.209/bwcc";
+  // static String baseUrl = "http://192.168.0.196/bwcc";
   // static String baseUrl = "https://bwcc.tncdigital.id";
   static String baseApiPath = "/api/1.0/";
 
@@ -102,24 +102,35 @@ class ApiService {
   }) async {
     try {
       var request = http.MultipartRequest('POST', Urls.api(path));
+      var headers = await getApiHeaders();
+      request.headers.addAll(headers);
+      logApp('Future<http.Response> post $path $fields ${request.headers}');
       if (fields != null) {
         request.fields.addAll(fields);
       }
       if (files != null) {
-        files.map((e) async {
-          var file = await http.MultipartFile.fromPath(e['name'].toString(), e['path'].toString());
+        for (var data in files) {
+          // var ext = e['path']!.split('.').last;
+          var file = await http.MultipartFile.fromPath(
+            data['name'].toString(),
+            data['path'].toString(),
+            // contentType: MediaType('image', ext),
+          );
           request.files.add(file);
-        });
+        }
       }
+
       var streamedResponse = await request.send().timeout(
             Duration(seconds: AppConfig.timeout),
             onTimeout: _timeOutStream,
           );
-
       var response = await http.Response.fromStream(streamedResponse);
+
+      logApp('Future<http.Response> post $path $fields $files => ' + response.body);
 
       return response;
     } catch (e) {
+      logApp('Future<http.Response> post $path $fields $files => ' + e.toString());
       return http.Response(getMessage(e), 500);
     }
   }
@@ -233,6 +244,7 @@ class Urls {
   static Uri api(String route) => Uri.parse(AppConfig.baseUrl + AppConfig.baseApiPath + route.trim());
   static String photo(String? name) => '${AppConfig.baseUrl}/profile/$name';
   static String getIcon(String? path) => '${AppConfig.baseUrl}$path';
+  static String getStorage(String? path) => '${AppConfig.baseUrl}/storage/$path';
 }
 
 String fileToBase64(String path) {

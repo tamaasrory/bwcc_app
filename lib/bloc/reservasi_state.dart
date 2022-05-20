@@ -64,7 +64,7 @@ class ResultGetMetodePembayaranState extends ReservasiState {
 }
 
 class ResultGetDaftarKeluargaState extends ReservasiState {
-  final List<SelectPasien> data;
+  final List<Pasien> data;
 
   const ResultGetDaftarKeluargaState(this.data);
 
@@ -101,7 +101,7 @@ class ResultDetailRiwayatState extends ReservasiState {
 
 class ProgessState extends ReservasiState {
   final bool loading;
-  final String? extra;
+  final dynamic extra;
 
   const ProgessState(this.loading, {this.extra});
 

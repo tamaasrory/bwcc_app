@@ -1,24 +1,26 @@
 import 'package:bwcc_app/bloc/beranda_bloc.dart';
+import 'package:bwcc_app/bloc/profile_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
+import 'package:bwcc_app/config/date_time.dart';
 import 'package:bwcc_app/models/artikel.dart';
+import 'package:bwcc_app/models/pasien.dart';
 import 'package:bwcc_app/ui/pages/detail_artikel_page.dart';
+import 'package:bwcc_app/ui/pages/detail_keluarga_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ArtikelPage extends StatefulWidget {
-  const ArtikelPage({Key? key}) : super(key: key);
+class DaftarKeluargaPage extends StatefulWidget {
+  const DaftarKeluargaPage({Key? key}) : super(key: key);
 
   @override
-  State<ArtikelPage> createState() => _ArtikelPageState();
+  State<DaftarKeluargaPage> createState() => _DaftarKeluargaPageState();
 }
 
-class _ArtikelPageState extends State<ArtikelPage> {
-  bool loadImgProfile = false;
-
+class _DaftarKeluargaPageState extends State<DaftarKeluargaPage> {
   @override
   initState() {
-    BlocProvider.of<BerandaBloc>(context).add(SetSlideArtikelEvent());
+    BlocProvider.of<ProfileBloc>(context).add(GetDaftarKeluargaEvent());
     super.initState();
   }
 
@@ -49,7 +51,7 @@ class _ArtikelPageState extends State<ArtikelPage> {
                       child: Image.asset(AppAssets.backWhite, width: 32, height: 32),
                     ),
                     const Text(
-                      'DAFTAR ARTIKEL',
+                      'DAFTAR KELUARGA',
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
@@ -71,50 +73,26 @@ class _ArtikelPageState extends State<ArtikelPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    BlocBuilder<BerandaBloc, BerandaState>(
+                    BlocBuilder<ProfileBloc, ProfileState>(
                       builder: (context, state) {
-                        var mQuery = MediaQuery.of(context).size;
-                        var acratio = mQuery.aspectRatio;
-
-                        List<Artikel>? data = state is SlideArtikelState ? state.data : null;
+                        List<Pasien>? data = state is ResultDaftarKeluargaState ? state.data : null;
                         return data != null
                             ? ListView(
                                 physics: const NeverScrollableScrollPhysics(),
                                 padding: const EdgeInsets.all(10),
                                 shrinkWrap: true,
                                 children: data.map((v) {
-                                  String deskripsi = '';
-                                  String judul = '';
-                                  if (v.deskripsi != null) {
-                                    if (v.deskripsi!.length >
-                                        ((mQuery.width * acratio) - (mQuery.width > 400 ? 120 : 150))) {
-                                      deskripsi = v.deskripsi!.substring(
-                                              0,
-                                              ((mQuery.width * acratio) - (mQuery.width > 400 ? 120 : 150))
-                                                  .toInt()) +
-                                          '...';
-                                    } else {
-                                      deskripsi = v.deskripsi!;
-                                    }
-                                  }
-                                  if (v.judul != null) {
-                                    if (v.judul!.length > (mQuery.width > 400 ? 45 : 35)) {
-                                      judul = v.judul!.substring(0, (mQuery.width > 400 ? 45 : 35)) + '...';
-                                    } else {
-                                      judul = v.judul!;
-                                    }
-                                  }
                                   return GestureDetector(
                                     onTap: () async {
                                       await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => DetailArtikelPage(
-                                            slug: v.slug.toString(),
+                                          builder: (context) => DetailKeluargaPage(
+                                            data: v,
                                           ),
                                         ),
                                       );
-                                      BlocProvider.of<BerandaBloc>(context).add(SetSlideArtikelEvent());
+                                      // BlocProvider.of<BerandaBloc>(context).add(SetSlideArtikelEvent());
                                     },
                                     child: Container(
                                         padding: const EdgeInsets.only(
@@ -131,9 +109,11 @@ class _ArtikelPageState extends State<ArtikelPage> {
                                         child: Row(
                                           children: [
                                             Container(
-                                              width: 150 * acratio,
-                                              height: 150 * acratio,
+                                              width: 90,
+                                              height: 90,
                                               decoration: BoxDecoration(
+                                                border: Border.all(width: 4, color: HexColor('#eeeeee')),
+                                                borderRadius: BorderRadius.circular(100),
                                                 boxShadow: [
                                                   BoxShadow(
                                                     color: Colors.grey.withOpacity(0.6),
@@ -144,10 +124,10 @@ class _ArtikelPageState extends State<ArtikelPage> {
                                                 ],
                                               ),
                                               child: ClipRRect(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                                child: v.image != null
+                                                borderRadius: BorderRadius.circular(100),
+                                                child: v.avatar != null
                                                     ? Image.network(
-                                                        Urls.getIcon(v.image!),
+                                                        Urls.getStorage(v.avatar!),
                                                         fit: BoxFit.cover,
                                                       )
                                                     : Image.asset(
@@ -160,20 +140,25 @@ class _ArtikelPageState extends State<ArtikelPage> {
                                               child: Padding(
                                                 padding: const EdgeInsets.symmetric(
                                                   vertical: 8,
-                                                  horizontal: 10,
+                                                  horizontal: 20,
                                                 ),
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                                   children: [
                                                     Text(
-                                                      judul,
+                                                      v.nama.toString(),
                                                       style: const TextStyle(
                                                         fontWeight: FontWeight.w600,
                                                         fontSize: 16,
                                                       ),
                                                     ),
                                                     Text(
-                                                      deskripsi,
+                                                      'Lahir : ' +
+                                                          AppDateTime(v.tglLahir).format('dd MMM yyyy'),
+                                                      style: TextStyle(color: HexColor('#888888')),
+                                                    ),
+                                                    Text(
+                                                      'Umur : ${v.umur.toString()} Tahun',
                                                       style: TextStyle(color: HexColor('#888888')),
                                                     ),
                                                   ],

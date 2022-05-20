@@ -112,6 +112,18 @@ class ReservasiBloc extends Bloc<ReservasiEvent, ReservasiState> {
       }
     });
 
+    on<PostKonfirmasiBayarEvent>((event, emit) async {
+      emit(const ProgessState(true));
+      var response = await ReservasiService.postKonfirmasi(event.noReservasi, event.imagePath);
+      logApp('on<PostKonfirmasiBayarEvent> ' + jsonEncode(response));
+
+      if (response.condition) {
+        emit(ProgessState(false, extra: response));
+      } else {
+        emit(ProgessState(false, extra: response));
+      }
+    });
+
     on<GetDetailDokterEvent>((event, emit) async {
       var response = await ReservasiService.getDetailDokter(id: event.id);
       logApp('on<GetDetailDokterEvent> ' + jsonEncode(response));

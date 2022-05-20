@@ -57,8 +57,8 @@ class _ReservasiPageState extends State<ReservasiPage> {
     Select(text: 'PILIH JENIS PEMBAYARAN', value: 'null'),
   ];
 
-  List<SelectPasien> _pilihanPasien = [
-    SelectPasien(text: 'PILIH PASIEN', value: 'null'),
+  List<Pasien> _pilihanPasien = [
+    Pasien(text: 'PILIH PASIEN', value: 'null'),
   ];
 
   @override
@@ -316,7 +316,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
                         if (state is ResultGetDaftarKeluargaState) {
                           if (state.data.isNotEmpty) {
                             _pilihanPasien = [
-                              SelectPasien(text: 'PILIH PASIEN', value: 'null'),
+                              Pasien(text: 'PILIH PASIEN', value: 'null'),
                             ];
                             _pilihanPasien.addAll(state.data);
                             setState(() {});
@@ -329,7 +329,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
                         items: _pilihanPasien.map((e) => e.toJson()).toList(),
                         onChanged: (newValue) {
                           formReservasi.nama = newValue.toString();
-                          var tmp = getValue(_pilihanPasien, formReservasi.nama) as SelectPasien;
+                          var tmp = getValue(_pilihanPasien, formReservasi.nama) as Pasien;
                           initialTglLahir = DateTime.parse(tmp.tglLahir.toString());
                           formReservasi.tglLahir = tmp.tglLahir.toString();
                           setState(() {});

@@ -39,6 +39,12 @@ class PostReservasiEvent extends ReservasiEvent {
   const PostReservasiEvent(this.formReservasi);
 }
 
+class PostKonfirmasiBayarEvent extends ReservasiEvent {
+  final String noReservasi;
+  final String imagePath;
+  const PostKonfirmasiBayarEvent(this.noReservasi, this.imagePath);
+}
+
 class GetDokterReservasiEvent extends ReservasiEvent {
   final String poliId;
 

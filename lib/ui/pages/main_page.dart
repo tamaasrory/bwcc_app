@@ -37,8 +37,18 @@ class _MainPageState extends State<MainPage> {
         );
       },
     ),
-    JadwalDokterPage(
-      key: PageStorageKey('Jadwal'),
+    Navigator(
+      key: ObjectKey('Jadwal'),
+      onGenerateRoute: (settings) {
+        logApp('settings.name => ' + settings.name.toString());
+
+        // if (settings.name == 'page2') page = Page2();
+        return MaterialPageRoute(
+          builder: (_) => JadwalDokterPage(
+            key: PageStorageKey('Jadwal'),
+          ),
+        );
+      },
     ),
     Navigator(
       key: ObjectKey('riwayat'),
@@ -53,8 +63,18 @@ class _MainPageState extends State<MainPage> {
         );
       },
     ),
-    ProfilePage(
-      key: PageStorageKey('Profile'),
+    Navigator(
+      key: ObjectKey('Profile'),
+      onGenerateRoute: (settings) {
+        logApp('settings.name => ' + settings.name.toString());
+
+        // if (settings.name == 'page2') page = Page2();
+        return MaterialPageRoute(
+          builder: (_) => ProfilePage(
+            key: PageStorageKey('Profile'),
+          ),
+        );
+      },
     ),
   ];
 
