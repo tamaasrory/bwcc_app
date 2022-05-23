@@ -77,11 +77,11 @@ class ApiService {
     try {
       var apiUrl = Urls.api(path);
       // logApp('ApiService GET => uri.authority => ${apiUrl.authority} ; uri.path => ${apiUrl.path}');
-      apiUrl = Uri.http(apiUrl.authority, apiUrl.path, query);
+      apiUrl = Uri.https(apiUrl.authority, apiUrl.path, query);
       var response = await http
           .get(apiUrl, headers: await getApiHeaders())
           .timeout(Duration(seconds: AppConfig.timeout), onTimeout: _timeOut);
-      logApp('Future<http.Response> GET $path $query => ' + response.body);
+      logApp('Future<http.Response> GET ${apiUrl} $path $query => ' + response.body);
       return response;
     } catch (e) {
       logApp('Future<http.Response> GET $path ERROR => ' + e.toString());
@@ -94,7 +94,7 @@ class ApiService {
       var response = await http
           .post(Urls.api(path), body: query, headers: await getApiHeaders())
           .timeout(Duration(seconds: AppConfig.timeout), onTimeout: _timeOut);
-      logApp('Future<http.Response> post $path $query => ' + response.body);
+      logApp('Future<http.Response> post ${response.request!.url} $path $query => ' + response.body);
       return response;
     } catch (e) {
       logApp('Future<http.Response> post $path ERROR => ' + e.toString());
@@ -111,7 +111,7 @@ class ApiService {
       var request = http.MultipartRequest('POST', Urls.api(path));
       var headers = await getApiHeaders();
       request.headers.addAll(headers);
-      logApp('Future<http.Response> post $path $fields ${request.headers}');
+      logApp('Future<http.Response> post ${request.url} $path $fields ${request.headers}');
       if (fields != null) {
         request.fields.addAll(fields);
       }
@@ -284,6 +284,7 @@ double distanceCalculate(double lat1, double lon1, double lat2, double lon2) {
 
 logApp(String message) {
   developer.log(message, name: 'DR APP');
+  print('DR APP ==> ' + message);
 }
 
 showSnackbar(context, String msg) {

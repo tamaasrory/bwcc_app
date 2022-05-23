@@ -188,6 +188,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 messages: 'Apakah Anda ingin logout sekarang juga ?',
                                 negativeText: 'TIDAK',
                                 positiveText: 'YA',
+                                negativeAction: () {
+                                  Navigator.of(context, rootNavigator: true).pop(false);
+                                },
                                 positiveAction: () {
                                   BlocProvider.of<AuthBloc>(context).add(SignOutEvent());
                                 },
