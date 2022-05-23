@@ -162,8 +162,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           listener: (context, state) {
                             if (state is AuthAttampState) {
                               if (!state.isLogged) {
-                                Navigator.pushReplacement(
-                                  context,
+                                Navigator.of(context, rootNavigator: true).pushReplacement(
                                   MaterialPageRoute<void>(
                                     builder: (BuildContext context) => const AuthPage(),
                                   ),

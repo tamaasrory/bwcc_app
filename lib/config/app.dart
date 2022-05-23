@@ -8,7 +8,6 @@ import 'dart:io' as io;
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart'
     show
         BorderRadius,
@@ -25,7 +24,6 @@ import 'package:flutter/material.dart'
         Text,
         Widget;
 import 'package:http/http.dart' as http;
-import 'package:image/image.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:image_editor/image_editor.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -36,10 +34,10 @@ import '../models/user.dart';
 
 class AppConfig {
   // static String baseUrl = "http://127.0.0.1/bwcc";
-  static String baseUrl = "http://192.168.43.209/bwcc";
+  // static String baseUrl = "http://192.168.43.209/bwcc";
   // static String baseUrl = "http://192.168.52.221/bwcc";
   // static String baseUrl = "http://192.168.0.196/bwcc";
-  // static String baseUrl = "https://bwcc.tncdigital.id";
+  static String baseUrl = "https://bwcc.tncdigital.id";
   static String baseApiPath = "/api/1.0/";
 
   static String prefIsLogged = 'isLogged';
