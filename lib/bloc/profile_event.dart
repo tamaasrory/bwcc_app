@@ -9,10 +9,41 @@ abstract class ProfileEvent extends Equatable {
 
 class GetDaftarKeluargaEvent extends ProfileEvent {}
 
-class AddDataKeluargaEvent extends ProfileEvent {}
+class AddDataKeluargaEvent extends ProfileEvent {
+  final Pasien data;
 
-class EditDataKeluargaEvent extends ProfileEvent {}
+  const AddDataKeluargaEvent(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
+class UploadFotoKeluargaEvent extends ProfileEvent {
+  final String id;
+  final String path;
+
+  const UploadFotoKeluargaEvent({required this.id, required this.path});
+
+  @override
+  List<Object> get props => [path, id];
+}
+
+class UploadFotoPribadiEvent extends ProfileEvent {
+  final String path;
+
+  const UploadFotoPribadiEvent(this.path);
+
+  @override
+  List<Object> get props => [path];
+}
 
 class PostGantiPasswordEvent extends ProfileEvent {}
 
-class PostUbahProfileEvent extends ProfileEvent {}
+class PostUbahProfileEvent extends ProfileEvent {
+  final Pasien data;
+
+  const PostUbahProfileEvent(this.data);
+
+  @override
+  List<Object> get props => [data];
+}

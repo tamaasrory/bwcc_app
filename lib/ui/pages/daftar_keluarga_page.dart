@@ -1,11 +1,9 @@
-import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/bloc/profile_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/config/date_time.dart';
-import 'package:bwcc_app/models/artikel.dart';
 import 'package:bwcc_app/models/pasien.dart';
-import 'package:bwcc_app/ui/pages/detail_artikel_page.dart';
 import 'package:bwcc_app/ui/pages/detail_keluarga_page.dart';
+import 'package:bwcc_app/ui/pages/tambah_keluarga_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +30,26 @@ class _DaftarKeluargaPageState extends State<DaftarKeluargaPage> {
     ));
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add, size: 40),
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TambahKeluargaPage(
+                data: Pasien(
+                  golonganDarah: 'null',
+                  provinsi: 'null',
+                  kabKota: 'null',
+                  kecamatan: 'null',
+                  desa: 'null',
+                ),
+              ),
+            ),
+          );
+          BlocProvider.of<ProfileBloc>(context).add(GetDaftarKeluargaEvent());
+        },
+      ),
       body: Column(
         children: [
           Container(
@@ -92,7 +110,7 @@ class _DaftarKeluargaPageState extends State<DaftarKeluargaPage> {
                                           ),
                                         ),
                                       );
-                                      // BlocProvider.of<BerandaBloc>(context).add(SetSlideArtikelEvent());
+                                      BlocProvider.of<ProfileBloc>(context).add(GetDaftarKeluargaEvent());
                                     },
                                     child: Container(
                                         padding: const EdgeInsets.only(

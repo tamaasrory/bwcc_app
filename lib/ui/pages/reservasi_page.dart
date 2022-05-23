@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:bwcc_app/bloc/auth_bloc.dart';
-import 'package:bwcc_app/bloc/bottom_navbar_bloc.dart';
 import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/config/date_time.dart';
@@ -11,7 +10,6 @@ import 'package:bwcc_app/models/select.dart';
 import 'package:bwcc_app/models/user.dart';
 import 'package:bwcc_app/ui/pages/detail_reservasi_page.dart';
 import 'package:bwcc_app/ui/widgets/color_full_label.dart';
-import 'package:bwcc_app/ui/widgets/datetimepicker.dart';
 import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:bwcc_app/ui/widgets/dropdown.dart';
 import 'package:bwcc_app/ui/widgets/text_field.dart';
@@ -74,16 +72,6 @@ class _ReservasiPageState extends State<ReservasiPage> {
       setState(() {});
     }
     super.initState();
-  }
-
-  getValue(List<dynamic> data, val, {bool? asBool}) {
-    int index = data.indexWhere((element) => element.value == val);
-    logApp('message ==> ' + val);
-    if (asBool == null || asBool == false) {
-      return index >= 0 ? data[index] : null;
-    } else {
-      return index >= 0 ? true : false;
-    }
   }
 
   _isValid() {

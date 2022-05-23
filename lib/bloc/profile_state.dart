@@ -17,3 +17,23 @@ class ResultDaftarKeluargaState extends ProfileState {
   @override
   List<Object> get props => [data];
 }
+
+class ResultUbahDataKeluargaState extends ProfileState {
+  final Pasien data;
+
+  const ResultUbahDataKeluargaState(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
+class ProgessState extends ProfileState {
+  final bool loading;
+  final dynamic extra;
+  final String? key;
+
+  const ProgessState(this.loading, {this.key, this.extra});
+
+  @override
+  List<Object> get props => [loading];
+}

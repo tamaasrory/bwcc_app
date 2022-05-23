@@ -279,41 +279,6 @@ class ReservasiService {
     }
   }
 
-  static Future<Responses<List<Pasien>>> getDaftarKeluarga() async {
-    try {
-      var response = await ApiService.get(
-        'reservasi/daftar-keluarga',
-      );
-
-      if (response.statusCode == 200) {
-        var jsonObject = jsonDecode(response.body);
-        // logApp("jsonObject['results'] ==> " + jsonEncode(jsonObject['results']));
-
-        return Responses<List<Pasien>>(
-          condition: jsonObject['condition'] as bool,
-          message: jsonObject['message'],
-          results: List<Pasien>.from(jsonObject['results'].map((value) {
-            // logApp('PoliService ==> ' + jsonEncode(value));
-            return Pasien.fromJson(value);
-          })),
-        );
-      } else {
-        return Responses<List<Pasien>>(
-          condition: false,
-          message: 'Tidak dapat memuat data, Sepertinya ada masalah',
-          results: List<Pasien>.from([]),
-        );
-      }
-    } catch (e) {
-      logApp('PoliService error message => ' + e.toString());
-      return Responses<List<Pasien>>(
-        condition: false,
-        message: 'Sepertinya ada masalah, Mohon periksa jaringan/koneksi anda',
-        results: List<Pasien>.from([]),
-      );
-    }
-  }
-
   static Future<Responses<Map<String, dynamic>>> postReservasi(FormReservasi formReservasi) async {
     try {
       var response = await ApiService.post("reservasi/store", formReservasi.toJson());

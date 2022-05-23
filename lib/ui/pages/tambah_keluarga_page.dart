@@ -17,17 +17,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
-class DetailKeluargaPage extends StatefulWidget {
+class TambahKeluargaPage extends StatefulWidget {
   final Pasien data;
-  const DetailKeluargaPage({Key? key, required this.data}) : super(key: key);
+  const TambahKeluargaPage({Key? key, required this.data}) : super(key: key);
 
   @override
-  State<DetailKeluargaPage> createState() => _DetailKeluargaPageState();
+  State<TambahKeluargaPage> createState() => _TambahKeluargaPageState();
 }
 
-class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
+class _TambahKeluargaPageState extends State<TambahKeluargaPage> {
   DateTime? initialTglLahir;
-  String? currentAvatar;
 
   List<Select> _pilihanProvinsi = [
     Select(text: 'PILIH PROVINSI', value: 'null'),
@@ -72,6 +71,7 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
 
   @override
   initState() {
+    logApp('SLUG => ' + widget.data.toString());
     BlocProvider.of<ResidenceBloc>(context).add(GetProvincesEvent());
     super.initState();
   }
@@ -103,7 +103,7 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                       child: Image.asset(AppAssets.backWhite, width: 32, height: 32),
                     ),
                     const Text(
-                      'DATA KELUARGA',
+                      'TAMBAH KELUARGA',
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
@@ -142,18 +142,13 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
-                          child: currentAvatar == null
-                              ? (widget.data.avatar != null
-                                  ? Image.network(
-                                      Urls.getStorage(widget.data.avatar!),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.asset(
-                                      'assets/images/banner-1.jpg',
-                                      fit: BoxFit.cover,
-                                    ))
-                              : Image.network(
-                                  Urls.getStorage(currentAvatar),
+                          child: widget.data.avatar != null
+                              ? Image.network(
+                                  Urls.getStorage(widget.data.avatar!),
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  'assets/images/banner-1.jpg',
                                   fit: BoxFit.cover,
                                 ),
                         ),
@@ -199,7 +194,7 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                                         );
 
                                         if (image != null) {
-                                          currentAvatar = await Navigator.push(
+                                          var tmp = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => FotoEditorPage(
@@ -208,6 +203,10 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                                               ),
                                             ),
                                           );
+                                          if (tmp != null) {
+                                            widget.data.avatar = tmp;
+                                            setState(() {});
+                                          }
                                           setState(() {});
                                           Navigator.pop(context, false);
                                         }
@@ -228,7 +227,7 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                                             await _picker.pickImage(source: ImageSource.camera);
 
                                         if (photo != null) {
-                                          currentAvatar = await Navigator.push(
+                                          var tmp = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => FotoEditorPage(
@@ -237,6 +236,10 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                                               ),
                                             ),
                                           );
+                                          if (tmp != null) {
+                                            widget.data.avatar = tmp;
+                                            setState(() {});
+                                          }
                                           setState(() {});
                                           Navigator.pop(context, false);
                                         }
@@ -576,7 +579,7 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                               child: BlocListener<ProfileBloc, ProfileState>(
                                 listener: (context, state) {
                                   if (state is ProgessState) {
-                                    if (state.key == 'detail_keluarga_page') {
+                                    if (state.key == 'add_kk') {
                                       loading = state.loading;
                                       if (!state.loading) {
                                         Future.delayed(const Duration(milliseconds: 1250), () {
@@ -584,13 +587,21 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                                           if (state.extra != null) {
                                             dialogInfo(
                                               context,
-                                              title: 'Berhasil Menyimpan Perubahan',
-                                              messages: 'Data anda berhasil diperbarui, terimakasih',
+                                              title: 'Berhasil Menambahkan',
+                                              messages:
+                                                  'Data keluarga baru anda berhasil ditambah, terimakasih',
+                                              dismissable: false,
                                             );
+                                            Future.delayed(const Duration(milliseconds: 1250), () {
+                                              Navigator.of(context, rootNavigator: true).pop(false);
+                                            });
+                                            Future.delayed(const Duration(milliseconds: 1350), () {
+                                              Navigator.pop(context, false);
+                                            });
                                           } else {
                                             dialogInfo(
                                               context,
-                                              title: 'Gagal Menyimpan Perubahan',
+                                              title: 'Gagal Menyimpan',
                                               messages:
                                                   'Serpertinya ada masalah, silahkan coba ulang beberapa saat lagi',
                                             );
@@ -620,7 +631,7 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                                               );
 
                                               BlocProvider.of<ProfileBloc>(context)
-                                                  .add(PostUbahProfileEvent(widget.data));
+                                                  .add(AddDataKeluargaEvent(widget.data));
                                             })
                                       : null,
                                   child: loading
@@ -643,7 +654,7 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                                           ],
                                         )
                                       : const Text(
-                                          'Simpan Perubahan',
+                                          'Simpan',
                                           style: TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.w500,

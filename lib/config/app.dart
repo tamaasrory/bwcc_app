@@ -1,13 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:developer' as developer;
 import 'dart:math';
 
 import 'dart:io' as io;
+import 'dart:typed_data';
+import 'dart:ui';
+import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart'
     show
         BorderRadius,
-        Color,
         Colors,
         EdgeInsets,
         MaterialPageRoute,
@@ -21,14 +25,19 @@ import 'package:flutter/material.dart'
         Text,
         Widget;
 import 'package:http/http.dart' as http;
+import 'package:image/image.dart';
+import 'package:flutter/material.dart' as material;
+import 'package:image_editor/image_editor.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user.dart';
 
 class AppConfig {
-  static String baseUrl = "http://127.0.0.1/bwcc";
-  // static String baseUrl = "http://192.168.43.209/bwcc";
+  // static String baseUrl = "http://127.0.0.1/bwcc";
+  static String baseUrl = "http://192.168.43.209/bwcc";
+  // static String baseUrl = "http://192.168.52.221/bwcc";
   // static String baseUrl = "http://192.168.0.196/bwcc";
   // static String baseUrl = "https://bwcc.tncdigital.id";
   static String baseApiPath = "/api/1.0/";
@@ -46,9 +55,9 @@ class AppConfig {
 
 class AppColors {
   // static Color softTeal = HexColor('#569aa1');
-  static Color softTeal = HexColor('#4a9ea1');
-  static Color softPink = HexColor('#e9739b');
-  static Color softWhite = HexColor('#fefefe');
+  static material.Color softTeal = HexColor('#4a9ea1');
+  static material.Color softPink = HexColor('#e9739b');
+  static material.Color softWhite = HexColor('#fefefe');
 }
 
 class AppAssets {
@@ -323,7 +332,7 @@ getMessage(e) {
   }
 }
 
-class HexColor extends Color {
+class HexColor extends material.Color {
   static int _getColorFromHex(String hexColor) {
     hexColor = hexColor.toUpperCase().replaceAll("#", "");
     if (hexColor.length == 6) {
@@ -333,4 +342,79 @@ class HexColor extends Color {
   }
 
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
+}
+
+getValue(List<dynamic> data, val, {bool? asBool}) {
+  int index = data.indexWhere((element) => element.value == val);
+  logApp('message ==> ' + val);
+  if (asBool == null || asBool == false) {
+    return index >= 0 ? data[index] : null;
+  } else {
+    return index >= 0 ? true : false;
+  }
+}
+
+class ImageSaver {
+  const ImageSaver._();
+
+  static Future<String?> save(String name, Uint8List fileData) async {
+    final String title = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final AssetEntity? imageEntity = await PhotoManager.editor.saveImage(
+      fileData,
+      title: title,
+    );
+    final File? file = await imageEntity?.file;
+    return file?.path;
+  }
+
+  static Future<String?> delete(String name) async {
+    await PhotoManager.editor.deleteWithIds([name]);
+  }
+}
+
+Future<Uint8List?> cropImageDataWithNativeLibrary({required ExtendedImageEditorState state}) async {
+  print('native library start cropping');
+  Rect cropRect = state.getCropRect()!;
+  if (state.widget.extendedImageState.imageProvider is ExtendedResizeImage) {
+    final ImmutableBuffer buffer = await ImmutableBuffer.fromUint8List(state.rawImageData);
+    final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
+
+    final double widthRatio = descriptor.width / state.image!.width;
+    final double heightRatio = descriptor.height / state.image!.height;
+    cropRect = Rect.fromLTRB(
+      cropRect.left * widthRatio,
+      cropRect.top * heightRatio,
+      cropRect.right * widthRatio,
+      cropRect.bottom * heightRatio,
+    );
+  }
+
+  final EditActionDetails action = state.editAction!;
+
+  final int rotateAngle = action.rotateAngle.toInt();
+  final bool flipHorizontal = action.flipY;
+  final bool flipVertical = action.flipX;
+  final Uint8List img = state.rawImageData;
+
+  final ImageEditorOption option = ImageEditorOption();
+  if (action.needCrop) {
+    option.addOption(ClipOption.fromRect(cropRect));
+  }
+
+  if (action.needFlip) {
+    option.addOption(FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
+  }
+
+  if (action.hasRotateAngle) {
+    option.addOption(RotateOption(rotateAngle));
+  }
+
+  final DateTime start = DateTime.now();
+  final Uint8List? result = await ImageEditor.editImage(
+    image: img,
+    imageEditorOption: option,
+  );
+
+  print('${DateTime.now().difference(start)} ：total time');
+  return result;
 }

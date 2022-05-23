@@ -1,5 +1,6 @@
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/models/info.dart';
+import 'package:bwcc_app/ui/pages/detail_info_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
@@ -26,32 +27,44 @@ class _BannerInfoPromoState extends State<BannerInfoPromo> {
         logApp('RUNNN => ' + i.image.toString());
         return Builder(
           builder: (BuildContext context) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      offset: const Offset(0.0, 2.0),
-                      blurRadius: 3,
-                      spreadRadius: 0,
-                    )
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  child: Image.network(
-                    Urls.getIcon(i.image),
-                    errorBuilder: (context, error, stackTrace) => Image.asset(
-                      itemsAlter,
+            return GestureDetector(
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailInfoPage(
+                      id: i.id.toString(),
+                    ),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        offset: const Offset(0.0, 2.0),
+                        blurRadius: 3,
+                        spreadRadius: 0,
+                      )
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                    child: Image.network(
+                      Urls.getIcon(i.image),
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
+                        itemsAlter,
+                        fit: BoxFit.fill,
+                      ),
                       fit: BoxFit.fill,
                     ),
-                    fit: BoxFit.fill,
                   ),
                 ),
               ),

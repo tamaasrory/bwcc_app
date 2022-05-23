@@ -8,6 +8,7 @@ import 'package:bwcc_app/models/form_reservasi.dart';
 import 'package:bwcc_app/models/pasien.dart';
 import 'package:bwcc_app/models/riwayat_reservasi.dart';
 import 'package:bwcc_app/models/select.dart';
+import 'package:bwcc_app/services/pasien.dart';
 import 'package:bwcc_app/services/reservasi.dart';
 import 'package:equatable/equatable.dart';
 
@@ -59,7 +60,7 @@ class ReservasiBloc extends Bloc<ReservasiEvent, ReservasiState> {
     });
 
     on<GetDaftarKeluargaEvent>((event, emit) async {
-      var response = await ReservasiService.getDaftarKeluarga();
+      var response = await PasienService.getDaftarKeluarga();
       logApp('on<GetDaftarKeluargaEvent> ' + jsonEncode(response));
       if (response.condition) {
         emit(ResultGetDaftarKeluargaState(response.results!));

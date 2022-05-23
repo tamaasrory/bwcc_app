@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/ui/widgets/color_full_label.dart';
 import 'package:flutter/material.dart';
 
@@ -43,17 +40,20 @@ class _SelectWidgetState extends State<SelectWidget> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         richLable(context, widget.label?.elementAt(0) ?? '', widget.label?.elementAt(1) ?? ''),
-        DropdownButton(
-          isExpanded: true,
-          // Initial Value
-          value: widget.value,
-          // Down Arrow Icon
-          icon: const Icon(Icons.keyboard_arrow_down),
-          // Array list of items
-          items: dropdownMenuItem(widget.items, widget.itemValue, widget.itemText),
-          // After selecting the desired option,it will
-          // change button value to selected value
-          onChanged: (v) => widget.onChanged(v),
+        ButtonTheme(
+          alignedDropdown: false,
+          child: DropdownButton(
+            isExpanded: true,
+            // Initial Value
+            value: widget.value,
+            // Down Arrow Icon
+            icon: const Icon(Icons.keyboard_arrow_down),
+            // Array list of items
+            items: dropdownMenuItem(widget.items, widget.itemValue, widget.itemText),
+            // After selecting the desired option,it will
+            // change button value to selected value
+            onChanged: (v) => widget.onChanged(v),
+          ),
         ),
       ],
     );

@@ -74,31 +74,31 @@ class Pasien {
     updatedAt = json['updated_at'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['value'] = value;
-    data['text'] = text;
-    data['id'] = id;
-    data['user_id'] = userId;
-    data['nrm'] = nrm;
-    data['golongan_darah'] = golonganDarah;
-    data['avatar'] = avatar;
-    data['nama'] = nama;
-    data['nama_penanggungjawab'] = namaPenanggungjawab;
-    data['jenis_kelamin'] = jenisKelamin;
-    data['note'] = note;
-    data['umur'] = umur;
-    data['phone'] = phone;
-    data['tempat_lahir'] = tempatLahir;
-    data['tgl_lahir'] = tglLahir;
-    data['alamat'] = alamat;
-    data['provinsi'] = provinsi;
-    data['kab_kota'] = kabKota;
-    data['kecamatan'] = kecamatan;
-    data['desa'] = desa;
-    data['kodepos'] = kodepos;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
+  Map<String, String> toJson() {
+    final Map<String, String> data = <String, String>{};
+    data['value'] = value.toString();
+    data['text'] = text.toString();
+    data['id'] = id.toString();
+    data['user_id'] = userId.toString();
+    data['nrm'] = nrm.toString();
+    data['golongan_darah'] = golonganDarah.toString();
+    data['avatar'] = avatar.toString();
+    data['nama'] = nama.toString();
+    data['nama_penanggungjawab'] = namaPenanggungjawab.toString();
+    data['jenis_kelamin'] = jenisKelamin.toString();
+    data['note'] = note.toString();
+    data['umur'] = umur.toString();
+    data['phone'] = phone.toString();
+    data['tempat_lahir'] = tempatLahir.toString();
+    data['tgl_lahir'] = tglLahir.toString();
+    data['alamat'] = alamat.toString();
+    data['provinsi'] = provinsi.toString();
+    data['kab_kota'] = kabKota.toString();
+    data['kecamatan'] = kecamatan.toString();
+    data['desa'] = desa.toString();
+    data['kodepos'] = kodepos.toString();
+    data['created_at'] = createdAt.toString();
+    data['updated_at'] = updatedAt.toString();
     return data;
   }
 }
