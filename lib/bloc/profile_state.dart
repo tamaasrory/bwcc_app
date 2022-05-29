@@ -9,6 +9,15 @@ abstract class ProfileState extends Equatable {
 
 class ProfileInitial extends ProfileState {}
 
+class MyProfileState extends ProfileState {
+  final User data;
+
+  const MyProfileState(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
 class ResultDaftarKeluargaState extends ProfileState {
   final List<Pasien> data;
 

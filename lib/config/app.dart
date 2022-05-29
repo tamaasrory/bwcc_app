@@ -34,10 +34,10 @@ import '../models/user.dart';
 
 class AppConfig {
   // static String baseUrl = "http://127.0.0.1/bwcc";
-  // static String baseUrl = "http://192.168.43.209/bwcc";
+  static String baseUrl = "http://192.168.43.209/bwcc";
   // static String baseUrl = "http://192.168.52.221/bwcc";
   // static String baseUrl = "http://192.168.0.196/bwcc";
-  static String baseUrl = "https://bwcc.tncdigital.id";
+  // static String baseUrl = "https://bwcc.tncdigital.id";
   static String baseApiPath = "/api/1.0/";
 
   static String prefIsLogged = 'isLogged';
@@ -77,7 +77,7 @@ class ApiService {
     try {
       var apiUrl = Urls.api(path);
       // logApp('ApiService GET => uri.authority => ${apiUrl.authority} ; uri.path => ${apiUrl.path}');
-      apiUrl = Uri.https(apiUrl.authority, apiUrl.path, query);
+      apiUrl = Uri.http(apiUrl.authority, apiUrl.path, query);
       var response = await http
           .get(apiUrl, headers: await getApiHeaders())
           .timeout(Duration(seconds: AppConfig.timeout), onTimeout: _timeOut);
@@ -208,7 +208,7 @@ saveData<T>(String key, T value) async {
   }
 }
 
-getData<T>(String key) async {
+Future<T> getData<T>(String key) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var tmp = null;
   switch (T) {

@@ -37,13 +37,33 @@ class UploadFotoPribadiEvent extends ProfileEvent {
   List<Object> get props => [path];
 }
 
-class PostGantiPasswordEvent extends ProfileEvent {}
+class PostChangePasswordEvent extends ProfileEvent {
+  final String currentPassword;
+  final String newPassword;
 
-class PostUbahProfileEvent extends ProfileEvent {
+  const PostChangePasswordEvent({required this.currentPassword, required this.newPassword});
+
+  @override
+  List<Object> get props => [currentPassword, newPassword];
+}
+
+class GetProfileEvent extends ProfileEvent {}
+
+class PostUbahProfileKeluargaEvent extends ProfileEvent {
   final Pasien data;
 
-  const PostUbahProfileEvent(this.data);
+  const PostUbahProfileKeluargaEvent(this.data);
 
   @override
   List<Object> get props => [data];
+}
+
+class PostUpdateProfileEvent extends ProfileEvent {
+  final String username;
+  final String noHp;
+
+  const PostUpdateProfileEvent({required this.username, required this.noHp});
+
+  @override
+  List<Object> get props => [username, noHp];
 }

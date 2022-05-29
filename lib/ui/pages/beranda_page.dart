@@ -88,6 +88,7 @@ class _BerandaPageState extends State<BerandaPage> {
                   Expanded(
                     flex: 4,
                     child: RichText(
+                      textAlign: TextAlign.center,
                       text: TextSpan(
                         style: TextStyle(
                           fontSize: 14.0,
@@ -96,10 +97,10 @@ class _BerandaPageState extends State<BerandaPage> {
                         ),
                         children: <TextSpan>[
                           const TextSpan(
-                            text: 'INFO : ',
+                            text: 'LIHAT ',
                           ),
                           TextSpan(
-                            text: 'dr. Riyana Mulai Tanggal 5 Cuti',
+                            text: 'INFORMASI DOKTER',
                             style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                           ),
                         ],

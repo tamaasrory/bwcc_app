@@ -10,9 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FotoEditorPage extends StatefulWidget {
-  final String id;
+  final String? id;
   final String imagePath;
-  const FotoEditorPage({Key? key, required this.imagePath, required this.id}) : super(key: key);
+  const FotoEditorPage({Key? key, required this.imagePath, this.id}) : super(key: key);
 
   @override
   State<FotoEditorPage> createState() => _FotoEditorPageState();
@@ -74,7 +74,7 @@ class _FotoEditorPageState extends State<FotoEditorPage> {
                           minimumSize: const Size(0, 0),
                         ),
                         onPressed: () {
-                          Navigator.pop(context, false);
+                          Navigator.pop(context, null);
                         },
                         child: Image.asset(
                           AppAssets.backWhite,
@@ -101,42 +101,42 @@ class _FotoEditorPageState extends State<FotoEditorPage> {
               ),
             ),
           ),
-          SizedBox(
-            height: 300,
-            width: 300,
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: 15,
-                bottom: 10,
-              ),
-              child: imagetmp != null
-                  ? Image.file(
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 15,
+              bottom: 10,
+            ),
+            child: imagetmp != null
+                ? SizedBox(
+                    width: 300,
+                    height: 300,
+                    child: Image.file(
                       File(imagetmp!),
                       fit: BoxFit.contain,
-                    )
-                  : ExtendedImage.file(
-                      File(widget.imagePath),
-                      fit: BoxFit.contain,
-                      mode: ExtendedImageMode.editor,
-                      compressionRatio: 0.005,
-                      maxBytes: 100,
-                      enableLoadState: true,
-                      extendedImageEditorKey: editorKey,
-                      cacheRawData: true,
-                      width: 300,
-                      height: 300,
-                      initEditorConfigHandler: (ExtendedImageState? state) {
-                        return EditorConfig(
-                            maxScale: 2,
-                            initCropRectType: InitCropRectType.imageRect,
-                            cropAspectRatio: 1,
-                            initialCropAspectRatio: 4.0 / 4.0,
-                            editActionDetailsIsChanged: (EditActionDetails? details) {
-                              //print(details?.totalScale);
-                            });
-                      },
                     ),
-            ),
+                  )
+                : ExtendedImage.file(
+                    File(widget.imagePath),
+                    fit: BoxFit.contain,
+                    mode: ExtendedImageMode.editor,
+                    compressionRatio: 0.1,
+                    maxBytes: 100,
+                    enableLoadState: true,
+                    extendedImageEditorKey: editorKey,
+                    cacheRawData: true,
+                    width: 300,
+                    height: 300,
+                    initEditorConfigHandler: (ExtendedImageState? state) {
+                      return EditorConfig(
+                          maxScale: 1,
+                          initCropRectType: InitCropRectType.imageRect,
+                          cropAspectRatio: 1,
+                          initialCropAspectRatio: 4.0 / 4.0,
+                          editActionDetailsIsChanged: (EditActionDetails? details) {
+                            //print(details?.totalScale);
+                          });
+                    },
+                  ),
           ),
           SizedBox(
             child: imagetmp != null
@@ -160,7 +160,7 @@ class _FotoEditorPageState extends State<FotoEditorPage> {
                           loading = state is ProgessState ? state.loading : false;
                           setState(() {});
                           if (state is ProgessState) {
-                            if (state.key == 'ganti_foto_kk') {
+                            if (['ganti_foto_kk', 'ganti_foto_user'].contains(state.key)) {
                               if (state.extra != null) {
                                 Future.delayed(const Duration(milliseconds: 1200), () {
                                   Navigator.of(context, rootNavigator: true).pop(false);
@@ -173,8 +173,14 @@ class _FotoEditorPageState extends State<FotoEditorPage> {
                                             }
                                           : () {
                                               Navigator.of(context, rootNavigator: true).pop(false);
-                                              context.read<ProfileBloc>().add(
-                                                  UploadFotoKeluargaEvent(id: widget.id, path: imagetmp!));
+                                              if (widget.id != null) {
+                                                context.read<ProfileBloc>().add(
+                                                    UploadFotoKeluargaEvent(id: widget.id!, path: imagetmp!));
+                                              } else {
+                                                context
+                                                    .read<ProfileBloc>()
+                                                    .add(UploadFotoPribadiEvent(imagetmp!));
+                                              }
                                             },
                                       child: Text(state.extra.condition ? 'Tutup' : 'Kirim Ulang'),
                                     ),
@@ -202,9 +208,13 @@ class _FotoEditorPageState extends State<FotoEditorPage> {
                           onPressed: loading
                               ? () {}
                               : () {
-                                  context
-                                      .read<ProfileBloc>()
-                                      .add(UploadFotoKeluargaEvent(id: widget.id, path: imagetmp!));
+                                  if (widget.id != null) {
+                                    context
+                                        .read<ProfileBloc>()
+                                        .add(UploadFotoKeluargaEvent(id: widget.id!, path: imagetmp!));
+                                  } else {
+                                    context.read<ProfileBloc>().add(UploadFotoPribadiEvent(imagetmp!));
+                                  }
                                 },
                           child: loading
                               ? Wrap(

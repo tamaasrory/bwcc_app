@@ -49,10 +49,8 @@ class AuthService {
     }
   }
 
-  // post 
-  static Future<Responses<User>> register({
-    required FormRegister formRegister
-  }) async {
+  // post
+  static Future<Responses<User>> register({required FormRegister formRegister}) async {
     try {
       var response = await ApiService.post("register", formRegister.toJson());
 

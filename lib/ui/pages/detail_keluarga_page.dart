@@ -54,17 +54,6 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
   ];
   bool loading = false;
   final ImagePicker _picker = ImagePicker();
-  File? _image;
-
-  // Implementing the image picker
-  Future<void> _openImagePicker() async {
-    final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      setState(() {
-        _image = File(pickedImage.path);
-      });
-    }
-  }
 
   _isValid() {
     return true;
@@ -620,7 +609,7 @@ class _DetailKeluargaPageState extends State<DetailKeluargaPage> {
                                               );
 
                                               BlocProvider.of<ProfileBloc>(context)
-                                                  .add(PostUbahProfileEvent(widget.data));
+                                                  .add(PostUbahProfileKeluargaEvent(widget.data));
                                             })
                                       : null,
                                   child: loading
