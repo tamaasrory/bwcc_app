@@ -8,6 +8,7 @@ abstract class BerandaEvent extends Equatable {
 }
 
 class SetSlideLayananEvent extends BerandaEvent {}
+class SetLayananLainEvent extends BerandaEvent {}
 
 class SetSlideInfoEvent extends BerandaEvent {}
 

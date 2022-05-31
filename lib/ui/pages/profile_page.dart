@@ -174,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 10),
               Text(
                 key: ObjectKey(user.username),
-                user.username.toString(),
+                user.username ?? '...',
                 style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 20,
@@ -205,7 +205,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ListTile(
                           title: Text(
                             key: ObjectKey(user.noHandphone),
-                            user.noHandphone.toString(),
+                            user.noHandphone ?? '...',
                             style: TextStyle(color: HexColor('#757575')),
                           ),
                           leading: const Icon(Icons.phone),
@@ -214,7 +214,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ListTile(
                           title: Text(
                             key: ObjectKey(user.email),
-                            user.email.toString(),
+                            user.email ?? '...',
                             style: TextStyle(color: HexColor('#757575')),
                           ),
                           leading: const Icon(Icons.mail),

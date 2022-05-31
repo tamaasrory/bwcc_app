@@ -15,6 +15,12 @@ class SlideLayananState extends BerandaState {
   const SlideLayananState(this.data);
 }
 
+class LayananLainState extends BerandaState {
+  final List<LayananKami> data;
+
+  const LayananLainState(this.data);
+}
+
 class SlideInfoState extends BerandaState {
   final List<Info> data;
 

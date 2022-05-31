@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:bwcc_app/models/detail_dokter.dart';
 import 'package:bwcc_app/models/dokter.dart';
 import 'package:bwcc_app/models/form_reservasi.dart';
-import 'package:bwcc_app/models/konfirmasi_pembayaran.dart';
-import 'package:bwcc_app/models/pasien.dart';
+import 'package:bwcc_app/models/info_dokter.dart';
 import 'package:bwcc_app/models/riwayat_reservasi.dart';
 import 'package:bwcc_app/models/select.dart';
 
@@ -416,6 +415,41 @@ class ReservasiService {
     } catch (e) {
       logApp('message ERROR => ' + e.toString());
       return Responses<Map<String, dynamic>>(
+        condition: false,
+        message: getMessage(e),
+        results: null,
+      );
+    }
+  }
+
+  static Future<Responses<InfoDokter>> getInfoDokter() async {
+    try {
+      var response = await ApiService.get("reservasi/info-dokter");
+
+      if (response.statusCode == 200) {
+        var jsonObject = jsonDecode(response.body);
+        // ignore: prefer_typing_uninitialized_variables
+        var results;
+        if (jsonObject['results'] != null) {
+          results = (jsonObject as Map<String, dynamic>)['results'];
+          results = InfoDokter.fromJson(results);
+        }
+
+        return Responses<InfoDokter>(
+          condition: jsonObject['condition'] as bool,
+          message: jsonObject['message'],
+          results: results,
+        );
+      } else {
+        return Responses<InfoDokter>(
+          condition: false,
+          message: 'InfoDokter tidak ditemukan',
+          results: null,
+        );
+      }
+    } catch (e) {
+      logApp('message ERROR => ' + e.toString());
+      return Responses<InfoDokter>(
         condition: false,
         message: getMessage(e),
         results: null,

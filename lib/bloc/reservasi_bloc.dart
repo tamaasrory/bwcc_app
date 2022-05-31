@@ -5,6 +5,7 @@ import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/models/detail_dokter.dart';
 import 'package:bwcc_app/models/dokter.dart';
 import 'package:bwcc_app/models/form_reservasi.dart';
+import 'package:bwcc_app/models/info_dokter.dart';
 import 'package:bwcc_app/models/pasien.dart';
 import 'package:bwcc_app/models/riwayat_reservasi.dart';
 import 'package:bwcc_app/models/select.dart';
@@ -40,6 +41,14 @@ class ReservasiBloc extends Bloc<ReservasiEvent, ReservasiState> {
       logApp('on<GetDetailRiwayatEvent> ' + jsonEncode(response));
       if (response.condition) {
         emit(ResultDetailRiwayatState(response.results!));
+      }
+    });
+
+    on<GetInfoDokterEvent>((event, emit) async {
+      var response = await ReservasiService.getInfoDokter();
+      logApp('on<GetInfoDokterEvent> ' + jsonEncode(response));
+      if (response.condition) {
+        emit(ResultInfoDokterState(response.results!));
       }
     });
 

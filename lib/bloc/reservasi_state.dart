@@ -108,3 +108,12 @@ class ProgessState extends ReservasiState {
   @override
   List<Object> get props => [loading];
 }
+
+class ResultInfoDokterState extends ReservasiState {
+  final InfoDokter? data;
+
+  const ResultInfoDokterState(this.data);
+
+  @override
+  List<Object> get props => [];
+}

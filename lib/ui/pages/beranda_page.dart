@@ -8,15 +8,16 @@ import 'package:bwcc_app/models/info.dart';
 import 'package:bwcc_app/models/layanan_kami.dart';
 import 'package:bwcc_app/models/user.dart';
 import 'package:bwcc_app/ui/pages/artikel_page.dart';
+import 'package:bwcc_app/ui/pages/info_dokter_page.dart';
 import 'package:bwcc_app/ui/pages/info_page.dart';
 import 'package:bwcc_app/ui/pages/reservasi_page.dart';
 import 'package:bwcc_app/ui/widgets/banner_artikel.dart';
 import 'package:bwcc_app/ui/widgets/banner_infopromo.dart';
+import 'package:bwcc_app/ui/widgets/banner_layanan.dart';
 import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'cari_dokter_page.dart';
 
@@ -30,6 +31,7 @@ class BerandaPage extends StatefulWidget {
 class _BerandaPageState extends State<BerandaPage> {
   bool loadImgProfile = false;
   List<Artikel> articles = [Artikel()];
+  List<LayananKami> layananLain = [LayananKami()];
   List<Info> infos = [Info()];
   List<LayananKami> _gridMenus = [];
 
@@ -40,6 +42,11 @@ class _BerandaPageState extends State<BerandaPage> {
     Future.delayed(const Duration(milliseconds: 1200), () {
       logApp('sending request slide layanan');
       context.read<BerandaBloc>().add(SetSlideLayananEvent());
+    });
+
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      logApp('sending request layanan lain');
+      context.read<BerandaBloc>().add(SetLayananLainEvent());
     });
 
     Future.delayed(const Duration(milliseconds: 1500), () {
@@ -72,41 +79,58 @@ class _BerandaPageState extends State<BerandaPage> {
             padding: const EdgeInsets.only(left: 20, right: 20, bottom: 5, top: 15),
             child: IntrinsicHeight(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(
-                    flex: 1,
-                    child: SizedBox(
-                      height: 34,
-                      width: 34,
-                      child: Image.asset(
-                        AppAssets.logoNew,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    flex: 4,
-                    child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.w500,
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 34,
+                        width: 34,
+                        child: Image.asset(
+                          AppAssets.logoNew,
+                          fit: BoxFit.contain,
                         ),
-                        children: <TextSpan>[
-                          const TextSpan(
-                            text: 'LIHAT ',
-                          ),
-                          TextSpan(
-                            text: 'INFORMASI DOKTER',
-                            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                          ),
-                        ],
                       ),
-                    ),
+                      const SizedBox(width: 10),
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          children: const <TextSpan>[
+                            TextSpan(
+                              text: 'BWCC',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
+                  OutlinedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const InfoDokterPage()),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 9),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: const [
+                          Icon(Icons.info, size: 20),
+                          Text(' Info Dokter'),
+                        ],
+                      ))
                 ],
               ),
             ),
@@ -348,6 +372,37 @@ class _BerandaPageState extends State<BerandaPage> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      children: [
+                        const TextSpan(text: 'Layanan '),
+                        TextSpan(
+                          text: 'Lain',
+                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                BlocListener<BerandaBloc, BerandaState>(
+                  listener: (context, state) {
+                    if (state is LayananLainState) {
+                      layananLain = state.data;
+                      setState(() {});
+                    }
+                  },
+                  child: BannerLayanan(
+                    items: layananLain,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                   child: RichText(
@@ -432,21 +487,21 @@ class _BerandaPageState extends State<BerandaPage> {
                       'icon': 'ic_ig.png',
                       'label': 'Cari Dokter',
                       'onPressed': () {
-                        _launchUrl('https://www.instagram.com/bwcc_bintaro/');
+                        openUrl('https://www.instagram.com/bwcc_bintaro/');
                       },
                     },
                     {
                       'icon': 'ic_facebook.png',
                       'label': 'Reservasi',
                       'onPressed': () {
-                        _launchUrl('https://facebook.com/bwccbintaro/');
+                        openUrl('https://facebook.com/bwccbintaro/');
                       },
                     },
                     {
                       'icon': 'ic_youtube.png',
                       'label': 'Promo',
                       'onPressed': () {
-                        _launchUrl('https://www.youtube.com/channel/UCUTDtLLjdvCF8gHBw9zvjuw');
+                        openUrl('https://www.youtube.com/channel/UCUTDtLLjdvCF8gHBw9zvjuw');
                       },
                     },
                   ].map((e) {
@@ -476,10 +531,5 @@ class _BerandaPageState extends State<BerandaPage> {
         ),
       ],
     );
-  }
-
-  void _launchUrl(String url) async {
-    final Uri _url = Uri.parse(url);
-    if (!await launchUrl(_url)) throw 'Could not launch $_url';
   }
 }

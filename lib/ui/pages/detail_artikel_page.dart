@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:html/dom.dart' as dom;
 
 class DetailArtikelPage extends StatefulWidget {
   final String slug;
@@ -135,8 +136,11 @@ class _DetailArtikelPageState extends State<DetailArtikelPage> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 0, bottom: 10, left: 8, right: 8),
                                 child: Html(
-                                  data: data.deskripsi.toString(),
-                                ),
+                                    data: data.deskripsi.toString(),
+                                    onLinkTap: (String? url, RenderContext context,
+                                        Map<String, String> attributes, dom.Element? element) {
+                                      openUrl(url.toString());
+                                    }),
                               ),
                               const SizedBox(height: 30),
                             ],

@@ -7,6 +7,7 @@ import '../config/app.dart';
 import '../models/responses.dart';
 
 class PasienService {
+  
   static Future<Responses<User>> getProfile() async {
     try {
       var response = await ApiService.get("user/profile");

@@ -29,6 +29,7 @@ import 'package:image_editor/image_editor.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/user.dart';
 
@@ -77,7 +78,12 @@ class ApiService {
     try {
       var apiUrl = Urls.api(path);
       // logApp('ApiService GET => uri.authority => ${apiUrl.authority} ; uri.path => ${apiUrl.path}');
-      apiUrl = Uri.http(apiUrl.authority, apiUrl.path, query);
+      if (apiUrl.port == 80) {
+        apiUrl = Uri.http(apiUrl.authority, apiUrl.path, query);
+      } else {
+        apiUrl = Uri.https(apiUrl.authority, apiUrl.path, query);
+      }
+
       var response = await http
           .get(apiUrl, headers: await getApiHeaders())
           .timeout(Duration(seconds: AppConfig.timeout), onTimeout: _timeOut);
@@ -208,7 +214,7 @@ saveData<T>(String key, T value) async {
   }
 }
 
-Future<T> getData<T>(String key) async {
+getData<T>(String key) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var tmp = null;
   switch (T) {
@@ -416,4 +422,9 @@ Future<Uint8List?> cropImageDataWithNativeLibrary({required ExtendedImageEditorS
 
   print('${DateTime.now().difference(start)} ：total time');
   return result;
+}
+
+openUrl(String url) async {
+  final Uri _url = Uri.parse(url);
+  if (!await launchUrl(_url)) throw 'Could not launch $_url';
 }

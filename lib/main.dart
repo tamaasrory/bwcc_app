@@ -2,6 +2,7 @@ import 'package:bwcc_app/bloc/auth_bloc.dart';
 import 'package:bwcc_app/bloc/bottom_navbar_bloc.dart';
 import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/bloc/profile_bloc.dart';
+import 'package:bwcc_app/bloc/res_layanan_bloc.dart';
 import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/bloc/residence_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
@@ -16,7 +17,6 @@ void main() {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-    DeviceOrientation.landscapeRight,
   ]).then((_) => runApp(const MyApp()));
 }
 
@@ -60,6 +60,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => AuthBloc()),
             BlocProvider(create: (context) => BottomNavbarBloc()),
             BlocProvider(create: (context) => ReservasiBloc()),
+            BlocProvider(create: (context) => ResLayananBloc()),
             BlocProvider(create: (context) => ProfileBloc()),
             BlocProvider(create: (context) => ResidenceBloc()),
           ],

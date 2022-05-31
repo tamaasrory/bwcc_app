@@ -5,7 +5,7 @@ import 'package:bwcc_app/services/artikel.dart';
 import 'package:bwcc_app/services/info.dart';
 import 'package:equatable/equatable.dart';
 import '../models/layanan_kami.dart';
-import '../services/layanan_kami.dart';
+import '../services/layanan.dart';
 
 part 'beranda_event.dart';
 part 'beranda_state.dart';
@@ -13,10 +13,18 @@ part 'beranda_state.dart';
 class BerandaBloc extends Bloc<BerandaEvent, BerandaState> {
   BerandaBloc() : super(HomeInitial()) {
     on<SetSlideLayananEvent>((event, emit) async {
-      var response = await LayananKamiService.index();
+      var response = await LayananService.layananKami();
       // logApp('on<SetSlideLayananEvent> => ' + jsonEncode(response));
       if (response.condition) {
         emit(SlideLayananState(response.results!));
+      }
+    });    
+    
+    on<SetLayananLainEvent>((event, emit) async {
+      var response = await LayananService.layananLain();
+      // logApp('on<SetLayananLainEvent> => ' + jsonEncode(response));
+      if (response.condition) {
+        emit(LayananLainState(response.results!));
       }
     });
 

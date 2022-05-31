@@ -25,6 +25,8 @@ class GetDaftarKeluargaEvent extends ReservasiEvent {}
 
 class GetRiwayatEvent extends ReservasiEvent {}
 
+class GetInfoDokterEvent extends ReservasiEvent {}
+
 class GetDetailRiwayatEvent extends ReservasiEvent {
   final String noReservasi;
 

@@ -109,12 +109,24 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                 ),
                               ),
                               const SizedBox(height: 5),
-                              const Text(
-                                'Terima kasih telah melakukan reservasi di BWCC\ndengan detail sebagai berikut:',
-                                style: TextStyle(
+                              Text(
+                                data.statuskonfirm == 'Terdaftar'
+                                    ? 'Terima kasih telah melakukan Konfirmasi Pembayaran di BWCC dengan detail sebagai berikut:'
+                                    : 'Terima kasih telah melakukan reservasi di BWCC\ndengan detail sebagai berikut:',
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
+                              const SizedBox(height: 10),
+                              data.statuskonfirm == 'Terdaftar'
+                                  ? Text(
+                                      'Nomor Antrian : ${data.noAntrian}',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    )
+                                  : const SizedBox(),
                               const SizedBox(height: 5),
                               SizedBox(
                                 height: 23,
@@ -169,6 +181,7 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 5),
                               Text(
                                 'Nama Poli : ${data.poli}',
                                 style: const TextStyle(
@@ -197,25 +210,41 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                 ),
                               ),
                               const SizedBox(height: 5),
-                              Text(
-                                'Admin Pendaftaran : ' +
-                                    NumberFormat.currency(
-                                      locale: 'id',
-                                      symbol: 'Rp ',
-                                      decimalDigits: 0,
-                                    ).format(int.parse(data.feePendaftaran!)),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                '''${data.additional}''',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
+                              data.statuskonfirm != 'Terdaftar'
+                                  ? Text(
+                                      'Admin Pendaftaran : ' +
+                                          NumberFormat.currency(
+                                            locale: 'id',
+                                            symbol: 'Rp ',
+                                            decimalDigits: 0,
+                                          ).format(int.parse(data.feePendaftaran!)),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    )
+                                  : const SizedBox(),
+                              const SizedBox(height: 15),
+                              data.statuskonfirm == 'Terdaftar'
+                                  ? Container(
+                                      padding: const EdgeInsets.all(15),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: HexColor('#dddddd'),
+                                      ),
+                                      child: Text(
+                                        data.additional.toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.red[700],
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
+                                      '''${data.additional}''',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                                 child: ElevatedButton(
@@ -227,98 +256,107 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                     primary: Theme.of(context).colorScheme.secondary,
                                     textStyle: const TextStyle(fontSize: 18),
                                   ),
-                                  onPressed: () async {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      builder: (context) {
-                                        // Using Wrap makes the bottom sheet height the height of the content.
-                                        // Otherwise, the height will be half the height of the screen.
-                                        return Wrap(
-                                          children: [
-                                            Container(
-                                              color: HexColor('#f5f5f5'),
-                                              width: MediaQuery.of(context).size.width,
-                                              padding: const EdgeInsets.symmetric(
-                                                vertical: 15,
-                                                horizontal: 20,
-                                              ),
-                                              child: const Text(
-                                                'Kirim Foto bukti transfer anda',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                // Pick an image
-                                                final XFile? image = await _picker.pickImage(
-                                                  source: ImageSource.gallery,
-                                                );
-
-                                                if (image != null) {
-                                                  await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) => KonfirmasiBayarPage(
-                                                        noReservasi: data.noReservasi.toString(),
-                                                        imagePath: image.path,
+                                  onPressed: !(['belum terdaftar', 'terdaftar']
+                                          .contains(data.statuskonfirm.toString().toLowerCase()))
+                                      ? () async {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            builder: (context) {
+                                              // Using Wrap makes the bottom sheet height the height of the content.
+                                              // Otherwise, the height will be half the height of the screen.
+                                              return Wrap(
+                                                children: [
+                                                  Container(
+                                                    color: HexColor('#f5f5f5'),
+                                                    width: MediaQuery.of(context).size.width,
+                                                    padding: const EdgeInsets.symmetric(
+                                                      vertical: 15,
+                                                      horizontal: 20,
+                                                    ),
+                                                    child: const Text(
+                                                      'Kirim Foto bukti transfer anda',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
                                                       ),
                                                     ),
-                                                  );
-                                                  context.read<ReservasiBloc>().add(
-                                                      GetDetailRiwayatEvent(data.noReservasi.toString()));
-                                                  Navigator.pop(context, false);
-                                                }
-                                              },
-                                              style: TextButton.styleFrom(
-                                                padding: EdgeInsets.zero,
-                                                minimumSize: const Size(0, 0),
-                                              ),
-                                              child: const ListTile(
-                                                leading: Icon(Icons.image),
-                                                title: Text('Ambil dari Gallery'),
-                                              ),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                // Capture a photo
-                                                final XFile? photo =
-                                                    await _picker.pickImage(source: ImageSource.camera);
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      // Pick an image
+                                                      final XFile? image = await _picker.pickImage(
+                                                        source: ImageSource.gallery,
+                                                      );
 
-                                                if (photo != null) {
-                                                  await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) => KonfirmasiBayarPage(
-                                                        noReservasi: data.noReservasi.toString(),
-                                                        imagePath: photo.path,
-                                                      ),
+                                                      if (image != null) {
+                                                        await Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => KonfirmasiBayarPage(
+                                                              noReservasi: data.noReservasi.toString(),
+                                                              imagePath: image.path,
+                                                            ),
+                                                          ),
+                                                        );
+                                                        context.read<ReservasiBloc>().add(
+                                                            GetDetailRiwayatEvent(
+                                                                data.noReservasi.toString()));
+                                                        Navigator.pop(context, false);
+                                                      }
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                      padding: EdgeInsets.zero,
+                                                      minimumSize: const Size(0, 0),
                                                     ),
-                                                  );
-                                                  context.read<ReservasiBloc>().add(
-                                                      GetDetailRiwayatEvent(data.noReservasi.toString()));
-                                                  Navigator.pop(context, false);
-                                                }
-                                              },
-                                              style: TextButton.styleFrom(
-                                                padding: EdgeInsets.zero,
-                                                minimumSize: const Size(0, 0),
-                                              ),
-                                              child: const ListTile(
-                                                leading: Icon(Icons.camera_alt),
-                                                title: Text('Foto dari Kamera'),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 70),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: const Text(
-                                    'Konfirmasi Pembayaran',
-                                    style: TextStyle(
+                                                    child: const ListTile(
+                                                      leading: Icon(Icons.image),
+                                                      title: Text('Ambil dari Gallery'),
+                                                    ),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      // Capture a photo
+                                                      final XFile? photo =
+                                                          await _picker.pickImage(source: ImageSource.camera);
+
+                                                      if (photo != null) {
+                                                        await Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => KonfirmasiBayarPage(
+                                                              noReservasi: data.noReservasi.toString(),
+                                                              imagePath: photo.path,
+                                                            ),
+                                                          ),
+                                                        );
+                                                        context.read<ReservasiBloc>().add(
+                                                            GetDetailRiwayatEvent(
+                                                                data.noReservasi.toString()));
+                                                        Navigator.pop(context, false);
+                                                      }
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                      padding: EdgeInsets.zero,
+                                                      minimumSize: const Size(0, 0),
+                                                    ),
+                                                    child: const ListTile(
+                                                      leading: Icon(Icons.camera_alt),
+                                                      title: Text('Foto dari Kamera'),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 70),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        }
+                                      : null,
+                                  child: Text(
+                                    data.noAntrian == 'null'
+                                        ? 'Konfirmasi Pembayaran'
+                                        : (data.statuskonfirm == 'Terdaftar'
+                                            ? 'Telah Dikonfirmasi'
+                                            : 'Menunggu konfirmasi'),
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
