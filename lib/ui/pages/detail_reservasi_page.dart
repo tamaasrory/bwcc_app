@@ -123,7 +123,6 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                       'Nomor Antrian : ${data.noAntrian}',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 18,
                                       ),
                                     )
                                   : const SizedBox(),
@@ -133,7 +132,7 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                 child: Row(
                                   children: [
                                     const Text(
-                                      'No. Reservasi : ',
+                                      'Nomor Pendaftaran : ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -182,19 +181,31 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                 ),
                               ),
                               const SizedBox(height: 5),
-                              Text(
-                                'Nama Poli : ${data.poli}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                'Nama Dokter : ${data.dokter}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                              data.layanan != null
+                                  ? Text(
+                                      'Nama Layanan : ${data.layanan}',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    )
+                                  : Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        Text(
+                                          'Nama Poli : ${data.poli}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          'Nama Dokter : ${data.dokter}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        )
+                                      ],
+                                    ),
                               const SizedBox(height: 5),
                               Text(
                                 'Jadwal : ${AppDateTime(data.hari).format('dd MMM yyyy')}',
@@ -212,7 +223,7 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                               const SizedBox(height: 5),
                               data.statuskonfirm != 'Terdaftar'
                                   ? Text(
-                                      'Admin Pendaftaran : ' +
+                                      'Biaya Pendaftaran : ' +
                                           NumberFormat.currency(
                                             locale: 'id',
                                             symbol: 'Rp ',

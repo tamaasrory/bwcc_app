@@ -35,10 +35,10 @@ import '../models/user.dart';
 
 class AppConfig {
   // static String baseUrl = "http://127.0.0.1/bwcc";
-  static String baseUrl = "http://192.168.43.209/bwcc";
+  // static String baseUrl = "http://192.168.43.209/bwcc";
   // static String baseUrl = "http://192.168.52.221/bwcc";
   // static String baseUrl = "http://192.168.0.196/bwcc";
-  // static String baseUrl = "https://bwcc.tncdigital.id";
+  static String baseUrl = "https://bwcc.tncdigital.id";
   static String baseApiPath = "/api/1.0/";
 
   static String prefIsLogged = 'isLogged';
@@ -212,6 +212,14 @@ saveData<T>(String key, T value) async {
       logApp('save data default => $value');
       preferences.setString(key, value.toString());
   }
+}
+
+Future<User> getUser() async {
+  return User.fromJson(jsonDecode(await getData<String>(AppConfig.prefUser)));
+}
+
+Future<void> setUser(User user) async {
+  return await saveData(AppConfig.prefUser, jsonEncode(user.toJson()));
 }
 
 getData<T>(String key) async {

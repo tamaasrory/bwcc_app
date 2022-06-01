@@ -5,6 +5,7 @@ class RiwayatReservasi {
     this.userId,
     this.pasienId,
     this.poliId,
+    this.idLayanan,
     this.dokterId,
     this.kuotaId,
     this.hari,
@@ -23,6 +24,7 @@ class RiwayatReservasi {
     this.poli,
     this.dokter,
     this.additional,
+    this.layanan,
   });
 
   String? id;
@@ -30,6 +32,7 @@ class RiwayatReservasi {
   String? userId;
   String? pasienId;
   String? poliId;
+  String? idLayanan;
   String? dokterId;
   String? kuotaId;
   String? hari;
@@ -48,6 +51,7 @@ class RiwayatReservasi {
   String? poli;
   String? dokter;
   String? additional;
+  String? layanan;
 
   factory RiwayatReservasi.fromJson(Map<String, dynamic> json) => RiwayatReservasi(
         id: json["id"].toString(),
@@ -55,6 +59,7 @@ class RiwayatReservasi {
         userId: json["user_id"].toString(),
         pasienId: json["pasien_id"].toString(),
         poliId: json["poli_id"].toString(),
+        idLayanan: json["id_layanan"].toString(),
         dokterId: json["dokter_id"].toString(),
         kuotaId: json["kuota_id"].toString(),
         hari: json["hari"].toString(),
@@ -72,6 +77,7 @@ class RiwayatReservasi {
         statuskonfirm: json["statuskonfirm"].toString(),
         poli: json["poli"].toString(),
         dokter: json["dokter"].toString(),
+        layanan: json["layanan"].toString(),
         additional: json["additional"].toString(),
       );
 
@@ -81,6 +87,7 @@ class RiwayatReservasi {
         "user_id": userId,
         "pasien_id": pasienId,
         "poli_id": poliId,
+        "id_layanan": idLayanan,
         "dokter_id": dokterId,
         "kuota_id": kuotaId,
         "hari": hari,
@@ -98,6 +105,7 @@ class RiwayatReservasi {
         "statuskonfirm": statuskonfirm,
         "poli": poli,
         "dokter": dokter,
+        "layanan": layanan,
         "additional": additional,
       };
 }

@@ -136,7 +136,9 @@ class _RiwayatPageState extends State<RiwayatPage> {
                                               ),
                                               const SizedBox(height: 8),
                                               Text(
-                                                '${v.nama}; ${v.poli}; ${v.dokter}',
+                                                v.layanan == 'null'
+                                                    ? '${v.nama}; ${v.poli}; ${v.dokter}'
+                                                    : '${v.nama}; Layanan: ${v.layanan};',
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.w500,
                                                 ),

@@ -54,13 +54,19 @@ class _ReservasiLayananPageState extends State<ReservasiLayananPage> {
   @override
   initState() {
     BlocProvider.of<ResLayananBloc>(context).add(GetLayananEvent());
-    BlocProvider.of<ResLayananBloc>(context).add(GetMetodePembayaranEvent());
     BlocProvider.of<reserva.ReservasiBloc>(context).add(reserva.GetDaftarKeluargaEvent());
     if (mounted) {
       formReservasi.kuotaLayananId = 'null';
+      formReservasi.idLayanan = 'null';
       formReservasi.nama = 'null';
       initialTglLahir = DateTime.now();
-      setState(() {});
+
+      getUser().then((value) {
+        formReservasi.namaPenanggungjawab = value.username;
+        formReservasi.email = value.email;
+        logApp('npj => ' + formReservasi.namaPenanggungjawab.toString());
+        setState(() {});
+      });
     }
     super.initState();
   }
@@ -75,9 +81,6 @@ class _ReservasiLayananPageState extends State<ReservasiLayananPage> {
       statusBarColor: Colors.transparent, // status bar color
       statusBarIconBrightness: Brightness.dark,
     ));
-    var _state = BlocProvider.of<AuthBloc>(context).state;
-    AuthAttampState authState = (_state is AuthAttampState) ? _state : AuthAttampState(data: User());
-    formReservasi.namaPenanggungjawab = authState.data.username;
 
     return Scaffold(
       body: Column(
@@ -131,6 +134,13 @@ class _ReservasiLayananPageState extends State<ReservasiLayananPage> {
                             ];
                             _pilihanLayanan.addAll(state.data);
                             setState(() {});
+                            if (widget.layananId.toString() != 'null') {
+                              BlocProvider.of<ResLayananBloc>(context).add(
+                                GetHariReservasiEvent(layanan: widget.layananId.toString()),
+                              );
+                              formReservasi.idLayanan = widget.layananId;
+                              setState(() {});
+                            } 
                           }
                         }
                       },
@@ -225,6 +235,7 @@ class _ReservasiLayananPageState extends State<ReservasiLayananPage> {
                     ),
                     const SizedBox(height: 10),
                     TextFieldWidget(
+                      key: ObjectKey(formReservasi.namaPenanggungjawab),
                       customelabel: richLable(context, 'Nama ', 'Penanggung Jawab'),
                       hint: 'Masukkan nama Penanggung Jawab',
                       value: formReservasi.namaPenanggungjawab,
@@ -268,7 +279,7 @@ class _ReservasiLayananPageState extends State<ReservasiLayananPage> {
                       value: AppDateTime(formReservasi.tglLahir).format('dd/MMM/yyyy'),
                       readonly: true,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
                     TextFieldWidget(
                       customelabel: richLable(context, 'Catatan ', ''),
                       hint: 'Masukkan Catatan',
@@ -325,7 +336,6 @@ class _ReservasiLayananPageState extends State<ReservasiLayananPage> {
                                   ? () {}
                                   : () {
                                       logApp('HASIL FORM DATA => ' + jsonEncode(formReservasi.toJson()));
-                                      formReservasi.email = authState.data.email;
                                       formReservasi.jamWaktu = getValue(
                                         _pilihanWaktu,
                                         formReservasi.kuotaLayananId.toString(),

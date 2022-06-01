@@ -68,6 +68,9 @@ class _ReservasiPageState extends State<ReservasiPage> {
       formReservasi.kuotaId = 'null';
       formReservasi.nama = 'null';
       formReservasi.asuransiId = 'null';
+      if (widget.dokterId.toString() == 'null') {
+        formReservasi.dokterId = 'null';
+      }
       initialTglLahir = DateTime.now();
       setState(() {});
     }
