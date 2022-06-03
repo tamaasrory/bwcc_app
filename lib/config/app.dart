@@ -224,7 +224,7 @@ Future<void> setUser(User user) async {
 
 getData<T>(String key) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  var tmp = null;
+  Object? tmp;
   switch (T) {
     case String:
       tmp = preferences.getString(key);
