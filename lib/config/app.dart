@@ -38,7 +38,7 @@ class AppConfig {
   // static String baseUrl = "http://192.168.43.209/bwcc";
   // static String baseUrl = "http://192.168.52.221/bwcc";
   // static String baseUrl = "http://192.168.0.196/bwcc";
-  static String baseUrl = "https://bwcc.tncdigital.id";
+  static String baseUrl = "https://bwcc.co.id";
   static String baseApiPath = "/api/1.0/";
 
   static String prefIsLogged = 'isLogged';
@@ -297,8 +297,8 @@ double distanceCalculate(double lat1, double lon1, double lat2, double lon2) {
 }
 
 logApp(String message) {
-  developer.log(message, name: 'DR APP');
-  print('DR APP ==> ' + message);
+  // developer.log(message, name: 'DR APP');
+  // print('DR APP ==> ' + message);
 }
 
 showSnackbar(context, String msg) {

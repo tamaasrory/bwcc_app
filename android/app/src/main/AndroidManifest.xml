@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.bwcc_app">
+    package="id.co.bwcc.mobile">
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Permissions options for the `contacts` group -->
