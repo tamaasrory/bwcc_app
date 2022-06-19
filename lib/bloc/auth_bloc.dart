@@ -108,6 +108,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
+    on<ForgotPasswordEvent>((event, emit) async {
+      emit(const AuthProgessState(true));
+
+      var httpResponse = await AuthService.forgotPassword(email: event.email);
+
+      emit(AuthProgessState(false, extra: httpResponse, key: 'forgot_pass'));
+    });
+
     on<SignOutEvent>((event, emit) async {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       bool isLogged = preferences.getBool(AppConfig.prefIsLogged) ?? false;

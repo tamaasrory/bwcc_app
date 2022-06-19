@@ -20,6 +20,13 @@ class LoginEvent extends AuthEvent {
   const LoginEvent(this.email, this.password);
 }
 
+// untuk proses forgot password
+class ForgotPasswordEvent extends AuthEvent {
+  final String email;
+
+  const ForgotPasswordEvent(this.email);
+}
+
 class RegisterEvent extends AuthEvent {
   final FormRegister formRegister;
 

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:bwcc_app/bloc/profile_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
-import 'package:bwcc_app/models/user.dart';
 import 'package:bwcc_app/ui/widgets/color_full_label.dart';
 import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:bwcc_app/ui/widgets/text_field.dart';

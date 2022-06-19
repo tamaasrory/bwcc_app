@@ -34,7 +34,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/user.dart';
 
 class AppConfig {
-  // static String baseUrl = "http://127.0.0.1/bwcc";
+  // static String baseUrl = "http://localhost/bwcc";
   // static String baseUrl = "http://192.168.43.209/bwcc";
   // static String baseUrl = "http://192.168.52.221/bwcc";
   // static String baseUrl = "http://192.168.0.196/bwcc";
@@ -297,7 +297,7 @@ double distanceCalculate(double lat1, double lon1, double lat2, double lon2) {
 }
 
 logApp(String message) {
-  // developer.log(message, name: 'DR APP');
+  developer.log(message, name: 'DR APP');
   // print('DR APP ==> ' + message);
 }
 

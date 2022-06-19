@@ -85,6 +85,45 @@ class AuthService {
     }
   }
 
+  // post
+  static Future<Responses<List>> forgotPassword({String? email}) async {
+    try {
+      // logApp("LOGOUT = " + username.toString() + " " + token.toString());
+      var response = await ApiService.post("forgot-password", {
+        "email": email.toString(),
+      });
+
+      if (response.statusCode == 200) {
+        // logApp("LOGOUT = " + response.body.toString());
+
+        var jsonObject = jsonDecode(response.body);
+        // ignore: prefer_typing_uninitialized_variables
+        var results;
+        if (jsonObject['results'] != null) {
+          results = (jsonObject as Map<String, dynamic>)['results'];
+        }
+
+        return Responses<List>(
+          condition: jsonObject['condition'] as bool,
+          message: jsonObject['message'],
+          results: results,
+        );
+      } else {
+        return Responses<List>(
+          condition: false,
+          message: 'Sepertinya ada masalah, mohon coba lagi nanti.',
+          results: null,
+        );
+      }
+    } catch (e) {
+      return Responses<List>(
+        condition: false,
+        message: getMessage(e),
+        results: null,
+      );
+    }
+  }
+
   static Future<Responses<List>> logout({
     String? email,
   }) async {

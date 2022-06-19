@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bwcc_app/bloc/auth_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
+import 'package:bwcc_app/ui/pages/lupa_sandi_page.dart';
 import 'package:bwcc_app/ui/pages/register_page.dart';
 import 'package:bwcc_app/ui/pages/splash_page.dart';
 import 'package:flutter/material.dart';
@@ -227,7 +228,7 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                   );
                 } else {
-                  showToast(context, state.message,position: MediaQuery.of(context).size.height - 200);
+                  showToast(context, state.message, position: MediaQuery.of(context).size.height - 200);
                 }
               }
             },
@@ -278,7 +279,9 @@ class _LoginFormState extends State<LoginForm> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const LupaSandiPage()));
+                },
                 child: const Text(
                   'Lupa Kata Sandi ?',
                   style: TextStyle(color: Colors.grey),

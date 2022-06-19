@@ -27,8 +27,11 @@ class AuthAttampState extends AuthState {
 
 class AuthProgessState extends AuthState {
   final bool loading;
+  final dynamic extra;
+  final String? key;
 
-  const AuthProgessState(this.loading);
+  const AuthProgessState(this.loading, {this.key, this.extra});
+
   @override
   List<Object> get props => [loading];
 }
