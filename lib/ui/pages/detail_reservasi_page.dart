@@ -24,17 +24,6 @@ class DetailReservasiPage extends StatefulWidget {
 
 class _DetailReservasiPageState extends State<DetailReservasiPage> {
   final ImagePicker _picker = ImagePicker();
-  File? _image;
-
-  // Implementing the image picker
-  Future<void> _openImagePicker() async {
-    final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      setState(() {
-        _image = File(pickedImage.path);
-      });
-    }
-  }
 
   @override
   initState() {
@@ -181,7 +170,7 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                 ),
                               ),
                               const SizedBox(height: 5),
-                              data.layanan != null
+                              (data.layanan != null && data.layanan != 'null')
                                   ? Text(
                                       'Nama Layanan : ${data.layanan}',
                                       style: const TextStyle(
@@ -308,9 +297,9 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                                             ),
                                                           ),
                                                         );
-                                                        context.read<ReservasiBloc>().add(
-                                                            GetDetailRiwayatEvent(
-                                                                data.noReservasi.toString()));
+                                                        context
+                                                            .read<ReservasiBloc>()
+                                                            .add(GetDetailRiwayatEvent(widget.noReservasi));
                                                         Navigator.pop(context, false);
                                                       }
                                                     },
@@ -339,9 +328,9 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                                             ),
                                                           ),
                                                         );
-                                                        context.read<ReservasiBloc>().add(
-                                                            GetDetailRiwayatEvent(
-                                                                data.noReservasi.toString()));
+                                                        context
+                                                            .read<ReservasiBloc>()
+                                                            .add(GetDetailRiwayatEvent(widget.noReservasi));
                                                         Navigator.pop(context, false);
                                                       }
                                                     },

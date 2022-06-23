@@ -91,7 +91,7 @@ class ApiService {
       return response;
     } catch (e) {
       logApp('Future<http.Response> GET $path ERROR => ' + e.toString());
-      return http.Response(getMessage(e), 500);
+      return http.Response(getMessage(e, full: true), 500);
     }
   }
 
@@ -104,7 +104,7 @@ class ApiService {
       return response;
     } catch (e) {
       logApp('Future<http.Response> post $path ERROR => ' + e.toString());
-      return http.Response(getMessage(e), 500);
+      return http.Response(getMessage(e, full: true), 500);
     }
   }
 
@@ -144,7 +144,7 @@ class ApiService {
       return response;
     } catch (e) {
       logApp('Future<http.Response> post $path $fields $files => ' + e.toString());
-      return http.Response(getMessage(e), 500);
+      return http.Response(getMessage(e, full: true), 500);
     }
   }
 
@@ -335,13 +335,15 @@ uniqeKey(int length) {
   );
 }
 
-getMessage(e) {
+getMessage(e, {bool? full}) {
   if (e.toString() == 'timeout') {
-    return '{"condition":false,"message":"Timeout, jaringan terlalu lambat'
-        ', mohon periksa jaringan anda.","results":null}';
+    return full != null
+        ? '{"condition":false,"message":"Timeout, jaringan terlalu lambat, mohon periksa jaringan anda.","results":null}'
+        : "Timeout, jaringan terlalu lambat, mohon periksa jaringan anda.";
   } else {
-    return '{"condition":false,"message":"Sepertinya ada masalah,'
-        ' Coba periksa jaringan anda","results":null}';
+    return full != null
+        ? '{"condition":false,"message":"Sepertinya ada masalah, Coba periksa jaringan anda","results":null}'
+        : "Sepertinya ada masalah, silahkan coba sebentar lagi.";
   }
 }
 

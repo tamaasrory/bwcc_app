@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bwcc_app/models/detail_dokter.dart';
 import 'package:bwcc_app/models/dokter.dart';
@@ -6,6 +7,7 @@ import 'package:bwcc_app/models/form_reservasi.dart';
 import 'package:bwcc_app/models/info_dokter.dart';
 import 'package:bwcc_app/models/riwayat_reservasi.dart';
 import 'package:bwcc_app/models/select.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import '../config/app.dart';
 import '../models/responses.dart';
@@ -381,13 +383,31 @@ class ReservasiService {
     }
   }
 
+  static Future<File?> compressAndGetFile(File file, String targetPath) async {
+    print("testCompressAndGetFile");
+    final result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      quality: 90,
+      minWidth: 1024,
+      minHeight: 1024,
+    );
+
+    print(file.lengthSync());
+    print(result?.lengthSync());
+
+    return result;
+  }
+
   static Future<Responses<Map<String, dynamic>>> postKonfirmasi(String noReservasi, String file) async {
     try {
+      String target = file + '_compressed.jpeg';
+      await compressAndGetFile(File(file), target);
       var response = await ApiService.postMultipart(
         'reservasi/konfirmasi',
         fields: {'no_reservasi': noReservasi},
         files: [
-          {'name': 'image', 'path': file}
+          {'name': 'image', 'path': target}
         ],
       );
 

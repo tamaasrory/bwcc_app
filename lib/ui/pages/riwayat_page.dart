@@ -65,108 +65,113 @@ class _RiwayatPageState extends State<RiwayatPage> {
           ),
           Image.asset(AppAssets.bgHeader, fit: BoxFit.cover),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                color: Theme.of(context).colorScheme.background,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    BlocBuilder<ReservasiBloc, ReservasiState>(
-                      builder: (context, state) {
-                        List<RiwayatReservasi>? data =
-                            state is ResultRiwayatReservasiState ? state.data : null;
-                        return data != null
-                            ? ListView(
-                                physics: const NeverScrollableScrollPhysics(),
-                                padding: const EdgeInsets.all(10),
-                                shrinkWrap: true,
-                                children: data.map((v) {
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => DetailReservasiPage(
-                                            noReservasi: v.noReservasi.toString(),
-                                            isFromReservasi: false,
+            child: RefreshIndicator(
+              onRefresh: () async {
+                BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
+              },
+              child: SingleChildScrollView(
+                child: Container(
+                  color: Theme.of(context).colorScheme.background,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      BlocBuilder<ReservasiBloc, ReservasiState>(
+                        builder: (context, state) {
+                          List<RiwayatReservasi>? data =
+                              state is ResultRiwayatReservasiState ? state.data : null;
+                          return data != null
+                              ? ListView(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.all(10),
+                                  shrinkWrap: true,
+                                  children: data.map((v) {
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => DetailReservasiPage(
+                                              noReservasi: v.noReservasi.toString(),
+                                              isFromReservasi: false,
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                      BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 5),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            width: 1,
-                                            color: Colors.grey,
+                                        );
+                                        BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 5),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              width: 1,
+                                              color: Colors.grey,
+                                            ),
+                                            borderRadius: const BorderRadius.all(Radius.circular(7)),
                                           ),
-                                          borderRadius: const BorderRadius.all(Radius.circular(7)),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 7),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                                            children: [
-                                              IntrinsicHeight(
-                                                child: Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      v.noReservasi.toString(),
-                                                      style: TextStyle(
-                                                        color: Theme.of(context).colorScheme.secondary,
-                                                        fontWeight: FontWeight.w500,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 7),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                                              children: [
+                                                IntrinsicHeight(
+                                                  child: Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        v.noReservasi.toString(),
+                                                        style: TextStyle(
+                                                          color: Theme.of(context).colorScheme.secondary,
+                                                          fontWeight: FontWeight.w500,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Text(
-                                                      AppDateTime(v.createdAt.toString())
-                                                          .format('EEEE, dd MMM yyyy HH:mm')
-                                                          .toUpperCase(),
-                                                      style: TextStyle(
-                                                        color: Theme.of(context).colorScheme.primary,
-                                                        fontWeight: FontWeight.w500,
+                                                      Text(
+                                                        AppDateTime(v.createdAt.toString())
+                                                            .format('EEEE, dd MMM yyyy HH:mm')
+                                                            .toUpperCase(),
+                                                        style: TextStyle(
+                                                          color: Theme.of(context).colorScheme.primary,
+                                                          fontWeight: FontWeight.w500,
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                v.layanan == 'null'
-                                                    ? '${v.nama}; ${v.poli}; ${v.dokter}'
-                                                    : '${v.nama}; Layanan: ${v.layanan};',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w500,
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  v.layanan == 'null'
+                                                      ? '${v.nama}; ${v.poli}; ${v.dokter}'
+                                                      : '${v.nama}; Layanan: ${v.layanan};',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                v.statuskonfirm.toString() != 'null'
-                                                    ? v.statuskonfirm.toString()
-                                                    : 'MENUNGGU KONFIRMASI PEMBAYARAN ANDA',
-                                                textAlign: TextAlign.right,
-                                                style: TextStyle(
-                                                  color: Colors.amber[800],
-                                                  fontWeight: FontWeight.w500,
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  v.statuskonfirm.toString() != 'null'
+                                                      ? v.statuskonfirm.toString()
+                                                      : 'MENUNGGU KONFIRMASI PEMBAYARAN ANDA',
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                    color: Colors.amber[800],
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                }).toList(),
-                              )
-                            : const Center(child: Text('Belum ada riwayat reservasi'));
-                      },
-                    ),
-                    const SizedBox(height: 30),
-                  ],
+                                    );
+                                  }).toList(),
+                                )
+                              : const Center(child: Text('Belum ada riwayat reservasi'));
+                        },
+                      ),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
                 ),
               ),
             ),

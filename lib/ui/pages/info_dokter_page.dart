@@ -17,8 +17,12 @@ class _InfoDokterPageState extends State<InfoDokterPage> {
 
   @override
   initState() {
-    BlocProvider.of<ReservasiBloc>(context).add(GetInfoDokterEvent());
+    setup();
     super.initState();
+  }
+
+  setup() {
+    BlocProvider.of<ReservasiBloc>(context).add(GetInfoDokterEvent());
   }
 
   @override
@@ -62,53 +66,58 @@ class _InfoDokterPageState extends State<InfoDokterPage> {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                color: Theme.of(context).colorScheme.background,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 0,
-                        right: 10,
-                        bottom: 0,
-                        left: 10,
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.6),
-                              offset: const Offset(0.0, 2.0),
-                              blurRadius: 5,
-                              spreadRadius: 0,
-                            )
-                          ],
+            child: RefreshIndicator(
+              onRefresh: () async {
+                setup();
+              },
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  color: Theme.of(context).colorScheme.background,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 0,
+                          right: 10,
+                          bottom: 0,
+                          left: 10,
                         ),
-                        child: BlocBuilder<ReservasiBloc, ReservasiState>(
-                          builder: (context, state) {
-                            if (state is ResultInfoDokterState) {
-                              return state.data != null
-                                  ? Html(data: state.data!.informasi)
-                                  : const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text('Tidak dapat memuat informasi dokter'),
-                                    );
-                            }
-                            return const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text('Sedang Memuat Informasi Dokter'),
-                            );
-                          },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.6),
+                                offset: const Offset(0.0, 2.0),
+                                blurRadius: 5,
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                          child: BlocBuilder<ReservasiBloc, ReservasiState>(
+                            builder: (context, state) {
+                              if (state is ResultInfoDokterState) {
+                                return state.data != null
+                                    ? Html(data: state.data!.informasi)
+                                    : const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Text('Tidak dapat memuat informasi dokter'),
+                                      );
+                              }
+                              return const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Sedang Memuat Informasi Dokter'),
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

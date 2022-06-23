@@ -39,26 +39,17 @@ class _BerandaPageState extends State<BerandaPage> {
 
   @override
   initState() {
-    Future.delayed(const Duration(milliseconds: 1200), () {
-      logApp('sending request slide layanan');
-      context.read<BerandaBloc>().add(SetSlideLayananEvent());
-    });
-
-    Future.delayed(const Duration(milliseconds: 1200), () {
-      logApp('sending request layanan lain');
-      context.read<BerandaBloc>().add(SetLayananLainEvent());
-    });
-
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      logApp('sending request slide info');
-      context.read<BerandaBloc>().add(SetSlideInfoEvent());
-    });
-
-    Future.delayed(const Duration(milliseconds: 1700), () {
-      logApp('sending request slide artikel');
-      context.read<BerandaBloc>().add(SetSlideArtikelEvent());
-    });
+    if (mounted) {
+      setup();
+    }
     super.initState();
+  }
+
+  setup() {
+    context.read<BerandaBloc>().add(SetSlideLayananEvent());
+    context.read<BerandaBloc>().add(SetLayananLainEvent());
+    context.read<BerandaBloc>().add(SetSlideInfoEvent());
+    context.read<BerandaBloc>().add(SetSlideArtikelEvent());
   }
 
   @override
@@ -222,310 +213,316 @@ class _BerandaPageState extends State<BerandaPage> {
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        offset: const Offset(0.0, 2.0),
-                        blurRadius: 3,
-                        spreadRadius: 0,
-                      )
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: RichText(
-                          text: TextSpan(
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            children: [
-                              const TextSpan(text: 'Layanan '),
-                              TextSpan(
-                                text: 'BWCC',
-                                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+          child: RefreshIndicator(
+            triggerMode: RefreshIndicatorTriggerMode.anywhere,
+            onRefresh: () async {
+              setup();
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          offset: const Offset(0.0, 2.0),
+                          blurRadius: 3,
+                          spreadRadius: 0,
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      BlocListener<BerandaBloc, BerandaState>(
-                        listener: (context, state) {
-                          if (state is SlideLayananState) {
-                            logApp('SLIDES => ' + jsonEncode(state.data));
-                            _gridMenus = state.data;
-                            setState(() {});
-                          }
-                        },
-                        child: GridView.count(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          crossAxisCount: 3,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: _gridMenus.map((e) {
-                            var labels = e.judul?.split(' ');
-                            List<TextSpan> wLabel = [];
-
-                            if ((labels?.length ?? 0) > 1) {
-                              wLabel.addAll([
-                                const TextSpan(text: 'Poli '),
+                              children: [
+                                const TextSpan(text: 'Layanan '),
                                 TextSpan(
-                                  text: e.judul?.replaceFirst('Poli ', ''),
+                                  text: 'BWCC',
                                   style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                                 ),
-                              ]);
-                            } else {
-                              wLabel.add(TextSpan(
-                                text: e.judul,
-                                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                              ));
+                              ],
+                            ),
+                          ),
+                        ),
+                        BlocListener<BerandaBloc, BerandaState>(
+                          listener: (context, state) {
+                            if (state is SlideLayananState) {
+                              logApp('SLIDES => ' + jsonEncode(state.data));
+                              _gridMenus = state.data;
+                              setState(() {});
                             }
+                          },
+                          child: GridView.count(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            crossAxisCount: 3,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: _gridMenus.map((e) {
+                              var labels = e.judul?.split(' ');
+                              List<TextSpan> wLabel = [];
 
-                            return ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                elevation: 0,
-                                primary: Theme.of(context).colorScheme.background,
-                                onPrimary: Theme.of(context).colorScheme.primary,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Image.asset(
-                                  //   'assets/images/${e['icon']}',
-                                  //   width: 80,
-                                  //   height: 80,
-                                  // ),
-                                  Image.network(
-                                    Urls.getIcon(e.icon),
-                                    width: 80,
-                                    height: 80,
-                                    errorBuilder: (a, b, c) {
-                                      return Image.asset(
-                                        'assets/images/icon_anak.png',
-                                        width: 80,
-                                        height: 80,
-                                      );
-                                    },
+                              if ((labels?.length ?? 0) > 1) {
+                                wLabel.addAll([
+                                  const TextSpan(text: 'Poli '),
+                                  TextSpan(
+                                    text: e.judul?.replaceFirst('Poli ', ''),
+                                    style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                                   ),
-                                  RichText(
-                                    text: TextSpan(
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Theme.of(context).colorScheme.primary,
-                                        fontSize: 15,
-                                      ),
-                                      children: wLabel,
+                                ]);
+                              } else {
+                                wLabel.add(TextSpan(
+                                  text: e.judul,
+                                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                                ));
+                              }
+
+                              return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  elevation: 0,
+                                  primary: Theme.of(context).colorScheme.background,
+                                  onPrimary: Theme.of(context).colorScheme.primary,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Image.asset(
+                                    //   'assets/images/${e['icon']}',
+                                    //   width: 80,
+                                    //   height: 80,
+                                    // ),
+                                    Image.network(
+                                      Urls.getIcon(e.icon),
+                                      width: 80,
+                                      height: 80,
+                                      errorBuilder: (a, b, c) {
+                                        return Image.asset(
+                                          'assets/images/icon_anak.png',
+                                          width: 80,
+                                          height: 80,
+                                        );
+                                      },
                                     ),
-                                  )
-                                ],
-                              ),
-                              onPressed: () {
-                                dialogContent(
-                                  context,
-                                  title: e.judul ?? 'Poli',
-                                  contentPadding: EdgeInsets.zero,
-                                  contents: SizedBox(
-                                    height: (MediaQuery.of(context).size.height / 2) - 50,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: SingleChildScrollView(
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            height: 180,
-                                            width: 180,
-                                            child: Image.network(
-                                              Urls.getIcon(e.icon),
-                                              errorBuilder: (a, b, c) {
-                                                return Image.asset(
-                                                  'assets/images/icon_anak.png',
-                                                );
-                                              },
+                                    RichText(
+                                      text: TextSpan(
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: Theme.of(context).colorScheme.primary,
+                                          fontSize: 15,
+                                        ),
+                                        children: wLabel,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                onPressed: () {
+                                  dialogContent(
+                                    context,
+                                    title: e.judul ?? 'Poli',
+                                    contentPadding: EdgeInsets.zero,
+                                    contents: SizedBox(
+                                      height: (MediaQuery.of(context).size.height / 2) - 50,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 180,
+                                              width: 180,
+                                              child: Image.network(
+                                                Urls.getIcon(e.icon),
+                                                errorBuilder: (a, b, c) {
+                                                  return Image.asset(
+                                                    'assets/images/icon_anak.png',
+                                                  );
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(20),
-                                            child: Text(e.deskripsi!),
-                                          )
-                                        ],
+                                            Padding(
+                                              padding: const EdgeInsets.all(20),
+                                              child: Text(e.deskripsi!),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      children: [
-                        const TextSpan(text: 'Layanan '),
-                        TextSpan(
-                          text: 'Lain',
-                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                                  );
+                                },
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
-                BlocListener<BerandaBloc, BerandaState>(
-                  listener: (context, state) {
-                    if (state is LayananLainState) {
-                      layananLain = state.data;
-                      setState(() {});
-                    }
-                  },
-                  child: BannerLayanan(
-                    items: layananLain,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      children: [
-                        const TextSpan(text: 'Info '),
-                        TextSpan(
-                          text: 'Promo',
-                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                      ],
+                        children: [
+                          const TextSpan(text: 'Layanan '),
+                          TextSpan(
+                            text: 'Lain',
+                            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                BlocListener<BerandaBloc, BerandaState>(
-                  listener: (context, state) {
-                    if (state is SlideInfoState) {
-                      infos = state.data;
-                      setState(() {});
-                    }
-                  },
-                  child: BannerInfoPromo(items: infos),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      children: [
-                        const TextSpan(text: 'Artikel '),
-                        TextSpan(
-                          text: 'Tips',
-                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                BlocListener<BerandaBloc, BerandaState>(
-                  listener: (context, state) {
-                    if (state is SlideArtikelState) {
-                      articles = state.data;
-                      setState(() {});
-                    }
-                  },
-                  child: BannerArtikel(
-                    items: articles,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      children: [
-                        const TextSpan(text: 'Social Media '),
-                        TextSpan(
-                          text: 'BWCC',
-                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    {
-                      'icon': 'ic_ig.png',
-                      'label': 'Cari Dokter',
-                      'onPressed': () {
-                        openUrl('https://www.instagram.com/bwcc_bintaro/');
-                      },
+                  BlocListener<BerandaBloc, BerandaState>(
+                    listener: (context, state) {
+                      if (state is LayananLainState) {
+                        layananLain = state.data;
+                        setState(() {});
+                      }
                     },
-                    {
-                      'icon': 'ic_facebook.png',
-                      'label': 'Reservasi',
-                      'onPressed': () {
-                        openUrl('https://facebook.com/bwccbintaro/');
-                      },
-                    },
-                    {
-                      'icon': 'ic_youtube.png',
-                      'label': 'Promo',
-                      'onPressed': () {
-                        openUrl('https://www.youtube.com/channel/UCUTDtLLjdvCF8gHBw9zvjuw');
-                      },
-                    },
-                  ].map((e) {
-                    return Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.all(2),
-                          minimumSize: const Size(0, 0),
-                          elevation: 0,
-                          primary: Colors.white,
-                          onPrimary: Colors.teal,
+                    child: BannerLayanan(
+                      items: layananLain,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                        child: Image.asset(
-                          'assets/images/' + (e['icon'] as String),
-                          width: 50,
-                        ),
-                        onPressed: e['onPressed'] as Function(),
+                        children: [
+                          const TextSpan(text: 'Info '),
+                          TextSpan(
+                            text: 'Promo',
+                            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                          ),
+                        ],
                       ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 40),
-              ],
+                    ),
+                  ),
+                  BlocListener<BerandaBloc, BerandaState>(
+                    listener: (context, state) {
+                      if (state is SlideInfoState) {
+                        infos = state.data;
+                        setState(() {});
+                      }
+                    },
+                    child: BannerInfoPromo(items: infos),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        children: [
+                          const TextSpan(text: 'Artikel '),
+                          TextSpan(
+                            text: 'Tips',
+                            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  BlocListener<BerandaBloc, BerandaState>(
+                    listener: (context, state) {
+                      if (state is SlideArtikelState) {
+                        articles = state.data;
+                        setState(() {});
+                      }
+                    },
+                    child: BannerArtikel(
+                      items: articles,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        children: [
+                          const TextSpan(text: 'Social Media '),
+                          TextSpan(
+                            text: 'BWCC',
+                            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      {
+                        'icon': 'ic_ig.png',
+                        'label': 'Cari Dokter',
+                        'onPressed': () {
+                          openUrl('https://www.instagram.com/bwcc_bintaro/');
+                        },
+                      },
+                      {
+                        'icon': 'ic_facebook.png',
+                        'label': 'Reservasi',
+                        'onPressed': () {
+                          openUrl('https://facebook.com/bwccbintaro/');
+                        },
+                      },
+                      {
+                        'icon': 'ic_youtube.png',
+                        'label': 'Promo',
+                        'onPressed': () {
+                          openUrl('https://www.youtube.com/channel/UCUTDtLLjdvCF8gHBw9zvjuw');
+                        },
+                      },
+                    ].map((e) {
+                      return Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(2),
+                            minimumSize: const Size(0, 0),
+                            elevation: 0,
+                            primary: Colors.white,
+                            onPrimary: Colors.teal,
+                          ),
+                          child: Image.asset(
+                            'assets/images/' + (e['icon'] as String),
+                            width: 50,
+                          ),
+                          onPressed: e['onPressed'] as Function(),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         ),

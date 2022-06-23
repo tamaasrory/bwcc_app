@@ -1,12 +1,10 @@
 import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/config/date_time.dart';
-import 'package:bwcc_app/models/artikel.dart';
 import 'package:bwcc_app/models/info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 class DetailInfoPage extends StatefulWidget {
   final String id;

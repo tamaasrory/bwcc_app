@@ -102,27 +102,31 @@ class _KonfirmasiBayarPageState extends State<KonfirmasiBayarPage> {
                   if (state.extra != null) {
                     Future.delayed(const Duration(milliseconds: 1200), () {
                       Navigator.of(context, rootNavigator: true).pop(false);
-                      dialogInfo(context, messages: state.extra.message, actions: [
-                        TextButton(
-                          onPressed: state.extra.condition
-                              ? () {
-                                  Navigator.of(context, rootNavigator: true).pop(false);
-                                }
-                              : () {
-                                  Navigator.of(context, rootNavigator: true).pop(false);
-                                  context
-                                      .read<ReservasiBloc>()
-                                      .add(PostKonfirmasiBayarEvent(widget.noReservasi, widget.imagePath));
-                                },
-                          child: Text(state.extra.condition ? 'Tutup' : 'Kirim Ulang'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context, rootNavigator: true).pop(false);
-                          },
-                          child: const Text('OK'),
-                        ),
-                      ]);
+                      dialogInfo(context,
+                          messages: state.extra.message,
+                          actions: [
+                            TextButton(
+                              onPressed: state.extra.condition
+                                  ? () {
+                                      Navigator.of(context, rootNavigator: true).pop(false);
+                                      Navigator.pop(context, false);
+                                    }
+                                  : () {
+                                      Navigator.of(context, rootNavigator: true).pop(false);
+                                      context.read<ReservasiBloc>().add(
+                                          PostKonfirmasiBayarEvent(widget.noReservasi, widget.imagePath));
+                                    },
+                              child: Text(state.extra.condition ? 'Tutup' : 'Kirim Ulang'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context, rootNavigator: true).pop(false);
+                                Navigator.pop(context, false);
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                          dismissable: false);
                     });
                   } else {
                     dialogInfo(

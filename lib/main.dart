@@ -4,7 +4,7 @@ import 'package:bwcc_app/bloc/beranda_bloc.dart';
 import 'package:bwcc_app/bloc/profile_bloc.dart';
 import 'package:bwcc_app/bloc/res_layanan_bloc.dart';
 import 'package:bwcc_app/bloc/reservasi_bloc.dart';
-import 'package:bwcc_app/bloc/residence_bloc.dart';
+import 'package:bwcc_app/bloc/residence_bloc.dart'; 
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/ui/pages/splash_page.dart';
 import 'package:flutter/material.dart';
