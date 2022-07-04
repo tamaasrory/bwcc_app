@@ -301,6 +301,16 @@ class _TambahKeluargaPageState extends State<TambahKeluargaPage> {
                             ),
                             const SizedBox(height: 25),
                             TextFieldWidget(
+                              customelabel: richLable(context, 'Nomor ', 'KTP/KIA'),
+                              hint: 'KTP/KIA (jika pasien anak)',
+                              value: widget.data.nik,
+                              onChanged: (v) {
+                                widget.data.nik = v.toString();
+                                setState(() {});
+                              },
+                            ),
+                            const SizedBox(height: 25),
+                            TextFieldWidget(
                               customelabel: richLable(context, 'Nomor ', 'Rekam Medis'),
                               hint: 'Nomor Rekam Medis',
                               value: widget.data.nrm,
