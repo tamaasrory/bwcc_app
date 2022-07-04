@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:bwcc_app/bloc/bottom_navbar_bloc.dart';
 import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
@@ -53,11 +51,11 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                     TextButton(
                       style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0)),
                       onPressed: () {
-                        if (widget.isFromReservasi) {
-                          BlocProvider.of<BottomNavbarBloc>(context).add(const BottomNavbarEvent(2));
-                        } else {
-                          Navigator.pop(context, false);
-                        }
+                        // // if (widget.isFromReservasi) {
+                        // BlocProvider.of<BottomNavbarBloc>(context).add(const BottomNavbarEvent(2));
+                        // // } else {
+                        Navigator.pop(context, false);
+                        // }
                       },
                       child: Image.asset(AppAssets.backWhite, width: 32, height: 32),
                     ),
@@ -292,7 +290,7 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) => KonfirmasiBayarPage(
-                                                              noReservasi: data.noReservasi.toString(),
+                                                              noReservasi: widget.noReservasi,
                                                               imagePath: image.path,
                                                             ),
                                                           ),
@@ -323,7 +321,7 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) => KonfirmasiBayarPage(
-                                                              noReservasi: data.noReservasi.toString(),
+                                                              noReservasi: widget.noReservasi,
                                                               imagePath: photo.path,
                                                             ),
                                                           ),

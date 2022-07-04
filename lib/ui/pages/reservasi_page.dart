@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bwcc_app/bloc/auth_bloc.dart';
+import 'package:bwcc_app/bloc/bottom_navbar_bloc.dart';
 import 'package:bwcc_app/bloc/reservasi_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/config/date_time.dart';
@@ -8,7 +9,6 @@ import 'package:bwcc_app/models/form_reservasi.dart';
 import 'package:bwcc_app/models/pasien.dart';
 import 'package:bwcc_app/models/select.dart';
 import 'package:bwcc_app/models/user.dart';
-import 'package:bwcc_app/ui/pages/detail_reservasi_page.dart';
 import 'package:bwcc_app/ui/widgets/color_full_label.dart';
 import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:bwcc_app/ui/widgets/dropdown.dart';
@@ -67,6 +67,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
     if (mounted) {
       formReservasi.kuotaId = 'null';
       formReservasi.nama = 'null';
+      formReservasi.nik = 'null';
       formReservasi.asuransiId = 'null';
       if (widget.dokterId.toString() == 'null') {
         formReservasi.dokterId = 'null';
@@ -323,6 +324,7 @@ class _ReservasiPageState extends State<ReservasiPage> {
                           var tmp = getValue(_pilihanPasien, formReservasi.nama) as Pasien;
                           initialTglLahir = DateTime.parse(tmp.tglLahir.toString());
                           formReservasi.tglLahir = tmp.tglLahir.toString();
+                          formReservasi.nik = tmp.nik.toString();
                           setState(() {});
                         },
                       ),
@@ -333,6 +335,14 @@ class _ReservasiPageState extends State<ReservasiPage> {
                       key: ObjectKey(formReservasi.tglLahir),
                       hint: 'Pilih Tanggal Lahir',
                       value: AppDateTime(formReservasi.tglLahir).format('dd/MMM/yyyy'),
+                      readonly: true,
+                    ),
+                    const SizedBox(height: 15),
+                    richLable(context, 'Nomor ', 'KTP / KAI'),
+                    TextFieldWidget(
+                      key: ObjectKey(formReservasi.nik),
+                      hint: 'Nomor KTP atau KAI (jika pasien anak)',
+                      value: formReservasi.nik.toString() != 'null' ? formReservasi.nik : null,
                       readonly: true,
                     ),
                     const SizedBox(height: 15),
@@ -378,14 +388,17 @@ class _ReservasiPageState extends State<ReservasiPage> {
                               Future.delayed(const Duration(milliseconds: 1250), () {
                                 setState(() {});
                                 if (state.extra != null) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => DetailReservasiPage(
-                                        noReservasi: state.extra.toString(),
-                                        isFromReservasi: true,
-                                      ),
-                                    ),
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => DetailReservasiPage(
+                                  //       noReservasi: state.extra.toString(),
+                                  //       isFromReservasi: true,
+                                  //     ),
+                                  //   ),
+                                  // );
+                                  BlocProvider.of<BottomNavbarBloc>(context).add(
+                                    BottomNavbarEvent(2, data: {'noReservasi': state.extra.toString()}),
                                   );
                                 } else {
                                   dialogInfo(

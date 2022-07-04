@@ -23,60 +23,64 @@ class _MainPageState extends State<MainPage> {
 
   DateTime _backpressTime = DateTime.now();
 
-  final List<Widget> _pages = [
-    Navigator(
-      key: ObjectKey('beranda'),
-      onGenerateRoute: (settings) {
-        logApp('settings.name => ' + settings.name.toString());
+  getPages(int index, dynamic data) {
+    final List<Widget> _pages = [
+      Navigator(
+        key: ObjectKey('beranda'),
+        onGenerateRoute: (settings) {
+          logApp('settings.name => ' + settings.name.toString());
 
-        // if (settings.name == 'page2') page = Page2();
-        return MaterialPageRoute(
-          builder: (_) => BerandaPage(
-            key: PageStorageKey('Beranda'),
-          ),
-        );
-      },
-    ),
-    Navigator(
-      key: ObjectKey('Jadwal'),
-      onGenerateRoute: (settings) {
-        logApp('settings.name => ' + settings.name.toString());
+          // if (settings.name == 'page2') page = Page2();
+          return MaterialPageRoute(
+            builder: (_) => BerandaPage(
+              key: PageStorageKey('Beranda'),
+            ),
+          );
+        },
+      ),
+      Navigator(
+        key: ObjectKey('Jadwal'),
+        onGenerateRoute: (settings) {
+          logApp('settings.name => ' + settings.name.toString());
 
-        // if (settings.name == 'page2') page = Page2();
-        return MaterialPageRoute(
-          builder: (_) => JadwalDokterPage(
-            key: PageStorageKey('Jadwal'),
-          ),
-        );
-      },
-    ),
-    Navigator(
-      key: ObjectKey('riwayat'),
-      onGenerateRoute: (settings) {
-        logApp('settings.name => ' + settings.name.toString());
+          // if (settings.name == 'page2') page = Page2();
+          return MaterialPageRoute(
+            builder: (_) => JadwalDokterPage(
+              key: PageStorageKey('Jadwal'),
+            ),
+          );
+        },
+      ),
+      Navigator(
+        key: ObjectKey('riwayat'),
+        onGenerateRoute: (settings) {
+          logApp('settings.name => ' + settings.name.toString());
 
-        // if (settings.name == 'page2') page = Page2();
-        return MaterialPageRoute(
-          builder: (_) => RiwayatPage(
-            key: PageStorageKey('Riwayat'),
-          ),
-        );
-      },
-    ),
-    Navigator(
-      key: ObjectKey('Profile'),
-      onGenerateRoute: (settings) {
-        logApp('settings.name => ' + settings.name.toString());
+          // if (settings.name == 'page2') page = Page2();
+          return MaterialPageRoute(
+            builder: (_) => RiwayatPage(
+              key: PageStorageKey('Riwayat'),
+              data: data,
+            ),
+          );
+        },
+      ),
+      Navigator(
+        key: ObjectKey('Profile'),
+        onGenerateRoute: (settings) {
+          logApp('settings.name => ' + settings.name.toString());
 
-        // if (settings.name == 'page2') page = Page2();
-        return MaterialPageRoute(
-          builder: (_) => ProfilePage(
-            key: PageStorageKey('Profile'),
-          ),
-        );
-      },
-    ),
-  ];
+          // if (settings.name == 'page2') page = Page2();
+          return MaterialPageRoute(
+            builder: (_) => ProfilePage(
+              key: PageStorageKey('Profile'),
+            ),
+          );
+        },
+      ),
+    ];
+    return _pages[index];
+  }
 
   @override
   void initState() {
@@ -108,7 +112,7 @@ class _MainPageState extends State<MainPage> {
       child: Scaffold(
         body: PageStorage(
           bucket: _pageBucket,
-          child: _pages[appState.index],
+          child: getPages(appState.index, appState.data),
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,

@@ -233,17 +233,44 @@ class _CariDokterPageState extends State<CariDokterPage> {
                                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                 children: [
                                                   Flexible(
-                                                      flex: 1,
-                                                      child: v.avatar != null
-                                                          ? Image.network(v.avatar.toString())
-                                                          : const Icon(
-                                                              Icons.account_circle,
-                                                              size: 45,
-                                                              color: Colors.grey,
-                                                            )),
+                                                    flex: 1,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(left: 5),
+                                                      child: Container(
+                                                        width: 60,
+                                                        height: 60,
+                                                        decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 2, color: HexColor('#eeeeee')),
+                                                          borderRadius: BorderRadius.circular(100),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.grey.withOpacity(0.6),
+                                                              offset: const Offset(0.0, 2.0),
+                                                              blurRadius: 5,
+                                                              spreadRadius: 0,
+                                                            )
+                                                          ],
+                                                        ),
+                                                        child: ClipRRect(
+                                                          borderRadius: BorderRadius.circular(100),
+                                                          child: v.avatar != null
+                                                              ? Image.network(
+                                                                  Urls.getStorage(v.avatar!),
+                                                                  fit: BoxFit.cover,
+                                                                )
+                                                              : const Icon(
+                                                                  Icons.account_circle,
+                                                                  size: 45,
+                                                                  color: Colors.grey,
+                                                                ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                   const SizedBox(width: 10),
                                                   Expanded(
-                                                    flex: 4,
+                                                    flex: 3,
                                                     child: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.stretch,
                                                       mainAxisAlignment: MainAxisAlignment.center,

@@ -4,11 +4,13 @@ import 'package:bwcc_app/config/date_time.dart';
 import 'package:bwcc_app/models/riwayat_reservasi.dart';
 import 'package:bwcc_app/ui/pages/detail_reservasi_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RiwayatPage extends StatefulWidget {
-  const RiwayatPage({Key? key}) : super(key: key);
+  final dynamic data;
+  const RiwayatPage({Key? key, this.data}) : super(key: key);
 
   @override
   State<RiwayatPage> createState() => _RiwayatPageState();
@@ -19,7 +21,27 @@ class _RiwayatPageState extends State<RiwayatPage> {
 
   @override
   initState() {
-    BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
+    if (widget.data != null) {
+      if (widget.data['noReservasi'].toString() != 'null') {
+        SchedulerBinding.instance.addPostFrameCallback((_) async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailReservasiPage(
+                noReservasi: widget.data['noReservasi'].toString(),
+                isFromReservasi: false,
+              ),
+            ),
+          );
+          widget.data['noReservasi'] = 'null';
+          BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
+        });
+      } else {
+        BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
+      }
+    } else {
+      BlocProvider.of<ReservasiBloc>(context).add(GetRiwayatEvent());
+    }
     super.initState();
   }
 

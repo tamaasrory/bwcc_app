@@ -34,17 +34,18 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/user.dart';
 
 class AppConfig {
-  // static String baseUrl = "http://localhost/bwcc";
+  // static String baseUrl = "https://bwcc.tncdigital.id";
   // static String baseUrl = "http://192.168.43.209/bwcc";
   // static String baseUrl = "http://192.168.52.221/bwcc";
+  static String baseUrl = "http://192.168.43.221/bwcc";
   // static String baseUrl = "http://192.168.0.196/bwcc";
-  static String baseUrl = "https://bwcc.co.id";
+  // static String baseUrl = "https://bwcc.co.id";
   static String baseApiPath = "/api/1.0/";
 
   static String prefIsLogged = 'isLogged';
   static String prefUser = 'user';
 
-  static int timeout = 60; // detik
+  static int timeout = 120; // detik
 
   static Future<PackageInfo> getAppDetail() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -85,7 +86,7 @@ class ApiService {
       }
 
       var response = await http
-          .get(apiUrl, headers: await getApiHeaders())
+          .get(apiUrl, headers: await getApiHeaders(type: 'get'))
           .timeout(Duration(seconds: AppConfig.timeout), onTimeout: _timeOut);
       logApp('Future<http.Response> GET ${apiUrl} $path $query => ' + response.body);
       return response;
@@ -148,7 +149,7 @@ class ApiService {
     }
   }
 
-  static Future<Map<String, String>> getApiHeaders() async {
+  static Future<Map<String, String>> getApiHeaders({String? type}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? token;
 
@@ -163,10 +164,15 @@ class ApiService {
     }
 
     var headers = {
-      // 'Content-Type': 'application/json',
-      // 'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     };
+
+    if (type == 'get') {
+      headers.addAll({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      });
+    }
     // logApp('getApiHeaders => ' + jsonEncode(headers));
     return headers;
   }

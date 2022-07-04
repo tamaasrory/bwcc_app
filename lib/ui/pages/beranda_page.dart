@@ -18,6 +18,7 @@ import 'package:bwcc_app/ui/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import 'cari_dokter_page.dart';
 
@@ -310,7 +311,7 @@ class _BerandaPageState extends State<BerandaPage> {
                                       height: 80,
                                       errorBuilder: (a, b, c) {
                                         return Image.asset(
-                                          'assets/images/icon_anak.png',
+                                          'assets/images/logo_transparant.png',
                                           width: 80,
                                           height: 80,
                                         );
@@ -340,20 +341,29 @@ class _BerandaPageState extends State<BerandaPage> {
                                         child: Column(
                                           children: [
                                             SizedBox(
-                                              height: 180,
-                                              width: 180,
+                                              // height: 180,
+                                              // width: 180,
                                               child: Image.network(
-                                                Urls.getIcon(e.icon),
+                                                Urls.getIcon(e.featureImage),
                                                 errorBuilder: (a, b, c) {
-                                                  return Image.asset(
-                                                    'assets/images/icon_anak.png',
+                                                  return Image.network(
+                                                    Urls.getIcon('/images/gedung_depan.jpeg'),
+                                                    errorBuilder: (a, b, c) {
+                                                      return SizedBox(
+                                                        height: 180,
+                                                        width: 180,
+                                                        child: Image.asset(
+                                                          'assets/images/logo_transparant.png',
+                                                        ),
+                                                      );
+                                                    },
                                                   );
                                                 },
                                               ),
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.all(20),
-                                              child: Text(e.deskripsi!),
+                                              child: Html(data: e.deskripsi!),
                                             )
                                           ],
                                         ),

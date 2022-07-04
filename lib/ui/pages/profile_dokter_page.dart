@@ -134,17 +134,38 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            height: 120,
-                            width: 120,
-                            child: state.data.avatar != null
-                                ? Image.network(state.data.avatar.toString())
-                                : const Icon(
-                                    Icons.account_circle,
-                                    size: 120,
-                                    color: Colors.grey,
-                                  ),
+                          Center(
+                            child: Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 2, color: HexColor('#eeeeee')),
+                                borderRadius: BorderRadius.circular(100),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.6),
+                                    offset: const Offset(0.0, 2.0),
+                                    blurRadius: 5,
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(100),
+                                child: state.data.avatar != null
+                                    ? Image.network(
+                                        Urls.getStorage(state.data.avatar!),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : const Icon(
+                                        Icons.account_circle,
+                                        size: 45,
+                                        color: Colors.grey,
+                                      ),
+                              ),
+                            ),
                           ),
+                          const SizedBox(height: 15),
                           Text(
                             state.data.nama.toString(),
                             textAlign: TextAlign.center,

@@ -9,6 +9,7 @@ class FormReservasi {
     this.feePendaftaran,
     this.asuransiId,
     this.nama,
+    this.nik,
     this.namaPenanggungjawab,
     this.gender,
     this.phone,
@@ -29,6 +30,7 @@ class FormReservasi {
   String? nama;
   String? namaPenanggungjawab;
   String? tglLahir;
+  String? nik;
   String? gender;
   String? phone;
   String? alamat;
@@ -44,6 +46,7 @@ class FormReservasi {
         'fee_pendaftaran': feePendaftaran.toString(),
         'asuransi_id': asuransiId.toString(),
         'nama': nama.toString(),
+        'nik': nik.toString(),
         'nama_penanggungjawab': namaPenanggungjawab.toString(),
         'tgl_lahir': tglLahir.toString(),
         'gender': gender.toString(),
@@ -59,6 +62,7 @@ class FormReservasi {
         hari.toString() != 'null' &&
         namaPenanggungjawab.toString() != 'null' &&
         nama.toString() != 'null' &&
+        nik.toString() != 'null' &&
         tglLahir.toString() != 'null' &&
         asuransiId.toString() != 'null';
   }

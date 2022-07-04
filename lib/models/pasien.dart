@@ -7,6 +7,7 @@ class Pasien {
   String? golonganDarah;
   String? avatar;
   String? nama;
+  String? nik;
   String? namaPenanggungjawab;
   String? jenisKelamin;
   String? note;
@@ -32,6 +33,7 @@ class Pasien {
       this.golonganDarah,
       this.avatar,
       this.nama,
+      this.nik,
       this.namaPenanggungjawab,
       this.jenisKelamin,
       this.note,
@@ -57,6 +59,7 @@ class Pasien {
     golonganDarah = json['golongan_darah'];
     avatar = json['avatar'];
     nama = json['nama'];
+    nik = json['nik'];
     namaPenanggungjawab = json['nama_penanggungjawab'];
     jenisKelamin = json['jenis_kelamin'];
     note = json['note'];
@@ -84,6 +87,7 @@ class Pasien {
     data['golongan_darah'] = golonganDarah.toString();
     data['avatar'] = avatar.toString();
     data['nama'] = nama.toString();
+    data['nik'] = nik.toString();
     data['nama_penanggungjawab'] = namaPenanggungjawab.toString();
     data['jenis_kelamin'] = jenisKelamin.toString();
     data['note'] = note.toString();
