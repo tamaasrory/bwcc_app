@@ -22,7 +22,7 @@ class ProfileDokterPage extends StatefulWidget {
 class _ProfileDokterPageState extends State<ProfileDokterPage> {
   bool loadImgProfile = false;
   List<String> polis = [];
-  List<String> polisIcon = [];
+  List<String?> polisIcon = [];
 
   @override
   initState() {
@@ -84,10 +84,11 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
                         if (poliId == 'null') {
                           poliId = gp.poliId.toString();
                         }
+                        String tpname = gp.poli.toString();
                         groupPoli.add(Padding(
                           padding: const EdgeInsets.only(top: 20, bottom: 5),
                           child: Text(
-                            'POLI ' + gp.poli.toString(),
+                            (tpname.toLowerCase().contains('tele') ? '' : 'POLI ') + tpname,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                               fontWeight: FontWeight.bold,
@@ -96,7 +97,7 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
                         ));
                         headerGroup.add(gp.poli);
                         polis.add('POLI ' + gp.poli.toString());
-                        polisIcon.add(gp.icon.toString());
+                        polisIcon.add(gp.icon);
                       }
                       groupPoli.add(
                         Column(
@@ -180,41 +181,6 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
                             ),
                           ),
                           const SizedBox(height: 15),
-                          IntrinsicHeight(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    polis.join(', '),
-                                    style: TextStyle(
-                                      color: Theme.of(context).colorScheme.secondary,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                Flexible(
-                                  flex: 1,
-                                  child: Image.asset(
-                                    state.data.icon ?? AppAssets.baby,
-                                    width: 60,
-                                    height: 60,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'JADWAL PRAKTEK',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
                             child: ElevatedButton(
@@ -247,7 +213,15 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 25),
+                          Text(
+                            'JADWAL PRAKTEK',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: groupPoli.toList(),

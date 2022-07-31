@@ -195,14 +195,14 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                     ),
                               const SizedBox(height: 5),
                               Text(
-                                'Jadwal : ${AppDateTime(data.hari).format('dd MMM yyyy')}',
+                                'Jadwal : ${AppDateTime(data.hari).format('EEEE, dd MMMM yyyy')}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                'Waktu : ${data.jam}',
+                                'Waktu : ${data.statuskonfirm != 'Terdaftar' ? data.jam : data.jamakhir}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                 ),

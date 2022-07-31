@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:bwcc_app/models/form_register.dart';
+import 'package:bwcc_app/services/pasien.dart';
 import 'package:equatable/equatable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -153,6 +154,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         logApp('on<CheckAndSetupLoginData> => logged => ' + dataUser);
         user = User.fromJson(jsonDecode(dataUser));
         logApp('on<CheckAndSetupLoginData> => ' + jsonEncode(user.toJson()));
+        var resProfile = await PasienService.getProfile();
+        if (!resProfile.condition) {
+          preferences.setBool(AppConfig.prefIsLogged, false);
+          preferences.setString(AppConfig.prefUser, "");
+
+          if (Platform.isAndroid) {
+            preferences.commit();
+          }
+          user = User();
+          isLogged = false;
+        }
       }
 
       emit(AuthAttampState(data: user, isLogged: isLogged));
