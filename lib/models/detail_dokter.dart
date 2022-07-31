@@ -67,6 +67,7 @@ class DetailDokter {
 class Jadwal {
   String? poliId;
   String? poli;
+  String? icon;
   String? hari;
   String? jamAwal;
   String? jamAkhir;
@@ -78,6 +79,7 @@ class Jadwal {
   Jadwal(
       {this.poliId,
       this.poli,
+      this.icon,
       this.hari,
       this.jamAwal,
       this.jamAkhir,
@@ -89,6 +91,7 @@ class Jadwal {
   Jadwal.fromJson(Map<String, dynamic> json) {
     poliId = json['poli_id'].toString();
     poli = json['poli'].toString();
+    icon = json['icon'].toString();
     hari = json['hari'].toString();
     jamAwal = json['jam_awal'].toString();
     jamAkhir = json['jam_akhir'].toString();
@@ -102,6 +105,7 @@ class Jadwal {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['poli_id'] = poliId;
     data['poli'] = poli;
+    data['icon'] = icon;
     data['hari'] = hari;
     data['jam_awal'] = jamAwal;
     data['jam_akhir'] = jamAkhir;

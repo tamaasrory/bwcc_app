@@ -96,7 +96,7 @@ class _BerandaPageState extends State<BerandaPage> {
                           ),
                           children: const <TextSpan>[
                             TextSpan(
-                              text: 'BWCC',
+                              text: 'MyBWCC',
                             ),
                           ],
                         ),
@@ -276,18 +276,27 @@ class _BerandaPageState extends State<BerandaPage> {
                               List<TextSpan> wLabel = [];
 
                               if ((labels?.length ?? 0) > 1) {
-                                wLabel.addAll([
-                                  const TextSpan(text: 'Poli '),
-                                  TextSpan(
-                                    text: e.judul?.replaceFirst('Poli ', ''),
-                                    style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                                  ),
-                                ]);
+                                for (var i = 0; i < labels!.length; i++) {
+                                  wLabel.add(
+                                    TextSpan(
+                                      text: labels[i] + ' ',
+                                      style: i > 0
+                                          ? TextStyle(color: Theme.of(context).colorScheme.secondary)
+                                          : null,
+                                    ),
+                                  );
+                                }
                               } else {
-                                wLabel.add(TextSpan(
-                                  text: e.judul,
-                                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                                ));
+                                var tmp = e.judul!.toLowerCase();
+                                if (tmp.contains('tele')) {
+                                  wLabel.add(const TextSpan(text: 'Tele'));
+                                  wLabel.add(TextSpan(
+                                    text: tmp.replaceFirst('tele', ''),
+                                    style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                                  ));
+                                } else {
+                                  wLabel.add(TextSpan(text: e.judul));
+                                }
                               }
 
                               return ElevatedButton(

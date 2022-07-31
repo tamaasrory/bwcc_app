@@ -21,6 +21,8 @@ class ProfileDokterPage extends StatefulWidget {
 
 class _ProfileDokterPageState extends State<ProfileDokterPage> {
   bool loadImgProfile = false;
+  List<String> polis = [];
+  List<String> polisIcon = [];
 
   @override
   initState() {
@@ -93,6 +95,8 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
                           ),
                         ));
                         headerGroup.add(gp.poli);
+                        polis.add('POLI ' + gp.poli.toString());
+                        polisIcon.add(gp.icon.toString());
                       }
                       groupPoli.add(
                         Column(
@@ -183,7 +187,7 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    state.data.spesialis.toString(),
+                                    polis.join(', '),
                                     style: TextStyle(
                                       color: Theme.of(context).colorScheme.secondary,
                                       fontWeight: FontWeight.w500,

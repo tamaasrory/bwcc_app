@@ -73,8 +73,8 @@ class _DetailArtikelPageState extends State<DetailArtikelPage> {
                 color: Theme.of(context).colorScheme.background,
                 child: BlocBuilder<BerandaBloc, BerandaState>(
                   builder: (context, state) {
-                    var mQuery = MediaQuery.of(context).size;
-                    var acratio = mQuery.aspectRatio;
+                    // var mQuery = MediaQuery.of(context).size;
+                    // var acratio = mQuery.aspectRatio;
                     Artikel? data = state is ResultDetailArtikelState ? state.data : null;
                     return data != null
                         ? Column(
@@ -84,9 +84,13 @@ class _DetailArtikelPageState extends State<DetailArtikelPage> {
                               ClipRRect(
                                 // borderRadius: BorderRadius.circular(8.0),
                                 child: data.image != null
-                                    ? Image.network(
-                                        Urls.getIcon(data.image!),
-                                        fit: BoxFit.cover,
+                                    ? InteractiveViewer(
+                                        minScale: 1,
+                                        maxScale: 4,
+                                        child: Image.network(
+                                          Urls.getIcon(data.image!),
+                                          fit: BoxFit.fitWidth,
+                                        ),
                                       )
                                     : Image.asset(
                                         'assets/images/banner-1.jpg',
@@ -107,15 +111,15 @@ class _DetailArtikelPageState extends State<DetailArtikelPage> {
                                 padding: const EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
                                 child: Row(
                                   children: [
-                                    Text(
-                                      data.author!.username.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.blueGrey,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
+                                    // Text(
+                                    //   data.author!.username.toString(),
+                                    //   style: const TextStyle(
+                                    //     color: Colors.blueGrey,
+                                    //     fontWeight: FontWeight.w500,
+                                    //     fontSize: 15,
+                                    //   ),
+                                    // ),
+                                    // const SizedBox(width: 8),
                                     const Icon(
                                       Icons.calendar_month,
                                       size: 16,

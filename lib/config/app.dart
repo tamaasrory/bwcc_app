@@ -35,11 +35,11 @@ import '../models/user.dart';
 
 class AppConfig {
   // static String baseUrl = "https://bwcc.tncdigital.id";
-  // static String baseUrl = "http://192.168.43.209/bwcc";
+  static String baseUrl = "http://192.168.43.209/bwcc";
   // static String baseUrl = "http://192.168.52.221/bwcc";
   // static String baseUrl = "http://192.168.43.221/bwcc";
   // static String baseUrl = "http://192.168.0.196/bwcc";
-  static String baseUrl = "https://bwcc.co.id";
+  // static String baseUrl = "https://bwcc.co.id";
   static String baseApiPath = "/api/1.0/";
 
   static String prefIsLogged = 'isLogged';
@@ -88,7 +88,7 @@ class ApiService {
       var response = await http
           .get(apiUrl, headers: await getApiHeaders(type: 'get'))
           .timeout(Duration(seconds: AppConfig.timeout), onTimeout: _timeOut);
-      logApp('Future<http.Response> GET ${apiUrl} $path $query => ' + response.body);
+      logApp('Future<http.Response> GET $apiUrl $path $query => ' + response.body);
       return response;
     } catch (e) {
       logApp('Future<http.Response> GET $path ERROR => ' + e.toString());
@@ -390,11 +390,12 @@ class ImageSaver {
 
   static Future<String?> delete(String name) async {
     await PhotoManager.editor.deleteWithIds([name]);
+    return null;
   }
 }
 
 Future<Uint8List?> cropImageDataWithNativeLibrary({required ExtendedImageEditorState state}) async {
-  print('native library start cropping');
+  logApp('native library start cropping');
   Rect cropRect = state.getCropRect()!;
   if (state.widget.extendedImageState.imageProvider is ExtendedResizeImage) {
     final ImmutableBuffer buffer = await ImmutableBuffer.fromUint8List(state.rawImageData);
@@ -436,7 +437,7 @@ Future<Uint8List?> cropImageDataWithNativeLibrary({required ExtendedImageEditorS
     imageEditorOption: option,
   );
 
-  print('${DateTime.now().difference(start)} ：total time');
+  logApp('${DateTime.now().difference(start)} : total time');
   return result;
 }
 

@@ -283,9 +283,9 @@ class _CariDokterPageState extends State<CariDokterPage> {
                                                           ),
                                                         ),
                                                         SizedBox(height: v.spesialis != null ? 3 : 0),
-                                                        v.spesialis != null
+                                                        v.namaPoli != null
                                                             ? Text(
-                                                                v.spesialis.toString(),
+                                                                'Poli ' + v.namaPoli.toString(),
                                                                 style: TextStyle(
                                                                   color:
                                                                       Theme.of(context).colorScheme.secondary,
@@ -297,11 +297,17 @@ class _CariDokterPageState extends State<CariDokterPage> {
                                                   ),
                                                   Flexible(
                                                     flex: 1,
-                                                    child: Image.asset(
-                                                      v.icon.toString(),
-                                                      width: 48,
-                                                      height: 48,
-                                                    ),
+                                                    child: v.icon != null
+                                                        ? Image.network(
+                                                            Urls.getIcon(v.icon!),
+                                                            width: 48,
+                                                            height: 48,
+                                                          )
+                                                        : Image.asset(
+                                                            AppAssets.baby,
+                                                            width: 48,
+                                                            height: 48,
+                                                          ),
                                                   ),
                                                 ],
                                               ),

@@ -1,7 +1,5 @@
 import 'package:bwcc_app/config/app.dart';
-import 'package:bwcc_app/models/artikel.dart';
 import 'package:bwcc_app/models/layanan_kami.dart';
-import 'package:bwcc_app/ui/pages/detail_artikel_page.dart';
 import 'package:bwcc_app/ui/pages/reservasi_layanan_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';

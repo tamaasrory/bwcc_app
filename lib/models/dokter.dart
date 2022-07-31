@@ -1,10 +1,9 @@
-import 'package:bwcc_app/config/app.dart';
-
 class Dokter {
   Dokter({
     this.id,
     this.avatar,
     this.icon,
+    this.namaPoli,
     this.spesialis,
     this.nama,
     this.createdBy,
@@ -14,6 +13,7 @@ class Dokter {
   String? id;
   String? avatar;
   String? icon;
+  String? namaPoli;
   String? spesialis;
   String? nama;
   String? createdBy;
@@ -22,7 +22,8 @@ class Dokter {
   factory Dokter.fromJson(Map<String, dynamic> json) => Dokter(
         id: json["id"].toString(),
         avatar: json["avatar"],
-        icon: json["icon"] ?? AppAssets.baby,
+        icon: json["icon"],
+        namaPoli: json["nama_poli"],
         spesialis: json["spesialis"],
         nama: json["nama"].toString(),
         createdBy: json["created_by"].toString(),
@@ -33,6 +34,7 @@ class Dokter {
         "id": id,
         "avatar": avatar,
         "icon": icon,
+        "nama_poli": namaPoli,
         "spesialis": spesialis,
         "nama": nama,
         "created_by": createdBy,

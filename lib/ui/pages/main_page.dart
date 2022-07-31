@@ -3,7 +3,6 @@ import 'package:bwcc_app/bloc/bottom_navbar_bloc.dart';
 import 'package:bwcc_app/config/app.dart';
 import 'package:bwcc_app/ui/pages/beranda_page.dart';
 import 'package:bwcc_app/ui/pages/jadwal_dokter_page.dart';
-import 'package:bwcc_app/ui/pages/detail_reservasi_page.dart';
 import 'package:bwcc_app/ui/pages/riwayat_page.dart';
 
 import 'package:flutter/material.dart';

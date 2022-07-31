@@ -5,6 +5,7 @@ import 'package:bwcc_app/models/info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pinch_zoom/pinch_zoom.dart';
 
 class DetailInfoPage extends StatefulWidget {
   final String id;
@@ -64,71 +65,29 @@ class _DetailInfoPageState extends State<DetailInfoPage> {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                // padding: const EdgeInsets.symmetric(horizontal: 25),
-                color: Theme.of(context).colorScheme.background,
-                child: BlocBuilder<BerandaBloc, BerandaState>(
-                  builder: (context, state) {
-                    var mQuery = MediaQuery.of(context).size;
-                    var acratio = mQuery.aspectRatio;
-                    Info? data = state is ResultDetailInfoState ? state.data : null;
-                    return data != null
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ClipRRect(
-                                // borderRadius: BorderRadius.circular(8.0),
-                                child: data.image != null
-                                    ? Image.network(
-                                        Urls.getIcon(data.image!),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.asset(
-                                        'assets/images/banner-1.jpg',
-                                        fit: BoxFit.cover,
-                                      ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 15, bottom: 5, left: 15, right: 15),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      data.createdBy!.username.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.blueGrey,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    const Icon(
-                                      Icons.calendar_month,
-                                      size: 16,
-                                      color: Colors.green,
-                                    ),
-                                    const SizedBox(width: 3),
-                                    Text(
-                                      AppDateTime(data.createdAt).format('dd MMM yyyy'),
-                                      style: const TextStyle(
-                                        color: Colors.blueGrey,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 30),
-                            ],
+            child: BlocBuilder<BerandaBloc, BerandaState>(
+              builder: (context, state) {
+                // var mQuery = MediaQuery.of(context).size;
+                // var acratio = mQuery.aspectRatio;
+                Info? data = state is ResultDetailInfoState ? state.data : null;
+                return data != null
+                    ? data.image != null
+                        ? InteractiveViewer(
+                            minScale: 1,
+                            maxScale: 4,
+                            child: Image.network(
+                              Urls.getIcon(data.image!),
+                              fit: BoxFit.fitWidth,
+                            ),
                           )
-                        : const Center(
-                            child: Text('Data tidak ditemukan'),
-                          );
-                  },
-                ),
-              ),
+                        : Image.asset(
+                            'assets/images/banner-1.jpg',
+                            fit: BoxFit.cover,
+                          )
+                    : const Center(
+                        child: Text('Data tidak ditemukan'),
+                      );
+              },
             ),
           ),
         ],
