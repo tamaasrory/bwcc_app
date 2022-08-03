@@ -53,8 +53,8 @@ android {
         applicationId "id.co.bwcc.mobile"
         minSdkVersion 21 // flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 4
-        versionName '1.0.4'
+        versionCode 5
+        versionName '1.0.5'
     }
 
 
