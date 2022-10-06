@@ -39,6 +39,7 @@ class AppConfig {
   // static String baseUrl = "http://192.168.52.221/bwcc";
   // static String baseUrl = "http://192.168.43.221/bwcc";
   // static String baseUrl = "http://192.168.0.196/bwcc";
+  // static String baseUrl = "http://localhost/bwcc";
   static String baseUrl = "https://bwcc.co.id";
   static String baseApiPath = "/api/1.0/";
 

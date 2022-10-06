@@ -79,58 +79,69 @@ class _ProfileDokterPageState extends State<ProfileDokterPage> {
                   if (state is ResultGetDetailDokterState) {
                     List<Widget> groupPoli = [];
                     var headerGroup = [];
-                    for (var gp in state.data.jadwal!) {
-                      if (!headerGroup.contains(gp.poli)) {
-                        if (poliId == 'null') {
-                          poliId = gp.poliId.toString();
-                        }
-                        String tpname = gp.poli.toString();
-                        groupPoli.add(Padding(
-                          padding: const EdgeInsets.only(top: 20, bottom: 5),
-                          child: Text(
-                            (tpname.toLowerCase().contains('tele') ? '' : 'POLI ') + tpname,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontWeight: FontWeight.bold,
+                    Map<String, List<Widget>> tmphp = {};
+                    for (var v in ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu']) {
+                      for (var gp in state.data.jadwal!) {
+                        if (!headerGroup.contains(gp.poli)) {
+                          if (poliId == 'null') {
+                            poliId = gp.poliId.toString();
+                          }
+                          String tpname = gp.poli.toString();
+                          headerGroup.add(gp.poli);
+                          polis.add('POLI ' + gp.poli.toString());
+                          polisIcon.add(gp.icon);
+                          tmphp[gp.poliId.toString()] = [];
+                          tmphp[gp.poliId]!.add(Padding(
+                            padding: const EdgeInsets.only(top: 20, bottom: 5),
+                            child: Text(
+                              (tpname.toLowerCase().contains('tele') ? '' : 'POLI ') + tpname,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ));
-                        headerGroup.add(gp.poli);
-                        polis.add('POLI ' + gp.poli.toString());
-                        polisIcon.add(gp.icon);
-                      }
-                      groupPoli.add(
-                        Column(
-                          children: [
-                            const Divider(thickness: 1),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          ));
+                        }
+
+                        if (v == gp.hari!.toLowerCase()) {
+                          tmphp[gp.poliId]!.add(
+                            Column(
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    (gp.hari.toString()).toUpperCase(),
-                                    style: TextStyle(
-                                      color: Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.w500,
+                                const Divider(thickness: 1),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        (gp.hari.toString()).toUpperCase(),
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.primary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    gp.jamAwal.toString().substring(0, 5) +
-                                        ' - ' +
-                                        gp.jamAkhir.toString().substring(0, 5),
-                                    style: TextStyle(
-                                      color: Theme.of(context).colorScheme.secondary,
+                                    Flexible(
+                                      child: Text(
+                                        gp.jamAwal.toString().substring(0, 5) +
+                                            ' - ' +
+                                            gp.jamAkhir.toString().substring(0, 5),
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.secondary,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      );
+                          );
+                        }
+                      }
                     }
+                    groupPoli = [];
+                    tmphp.forEach((key, value) {
+                      groupPoli.addAll(value);
+                    });
 
                     return Container(
                       padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
