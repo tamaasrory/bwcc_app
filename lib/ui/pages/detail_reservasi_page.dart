@@ -119,7 +119,7 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                 child: Row(
                                   children: [
                                     const Text(
-                                      'Nomor Pendaftaran : ',
+                                      'No. Pendaftaran : ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -137,8 +137,8 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(width: 5),
-                                    TextButton(
+                                    const SizedBox(width: 2),
+                                    ElevatedButton(
                                       onPressed: (() {
                                         Clipboard.setData(
                                           ClipboardData(text: data.noReservasi.toString()),
@@ -151,18 +151,10 @@ class _DetailReservasiPageState extends State<DetailReservasiPage> {
                                         });
                                       }),
                                       style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero,
+                                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                                         minimumSize: const Size(0, 0),
                                       ),
-                                      child: Wrap(
-                                        children: const [
-                                          Icon(
-                                            Icons.copy,
-                                            size: 18,
-                                          ),
-                                          Text('Copy')
-                                        ],
-                                      ),
+                                      child: const Text('Salin'),
                                     )
                                   ],
                                 ),
